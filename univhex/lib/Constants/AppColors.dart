@@ -16,7 +16,8 @@ pembeden aquaya
 class AppColors {
   static const Color myBlack = Color(0xFF212834);
   static const Color obsidianInvert = Color(0XFFdad8d5);
-  static const Color bgColor = Color(0xFF121212);
+  // static const Color bgColor = Color(0xFF121212);
+  static const Color bgColor = Color(0x00000000);
   static const Color myBlue = Color(0xFF567CFF);
   static const Color myLightBlue = Color(0xFF8EA8FF);
   static const Color myAqua = Color(0xFF7AF8FF);

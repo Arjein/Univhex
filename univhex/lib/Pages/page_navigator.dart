@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Pages/Home/home_screen.dart';
@@ -22,7 +23,9 @@ class _UserPageState extends State<UserPage> {
     _selectedIndex = 0;
     _widgetOptions = <Widget>[
       const HomePage(),
-      ProfilePage(currentUser: CurrentUser.user!),
+      ProfilePage(
+        currentUser: CurrentUser.user!,
+      ),
     ];
     super.initState();
   }
@@ -32,6 +35,7 @@ class _UserPageState extends State<UserPage> {
     return Scaffold(
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColors.bgColor,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

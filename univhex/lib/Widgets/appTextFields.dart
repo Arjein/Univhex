@@ -24,7 +24,9 @@ class AppTextFormField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
+        autocorrect: false,
         obscureText: obscure,
+        enableSuggestions: false,
         validator: validator ?? defaultValidator,
         controller: controller,
         decoration: InputDecoration(

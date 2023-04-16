@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/Constants.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Objects/post_interaction_bar.dart';
+import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -10,9 +13,28 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: const Text("Home"),
       ),
-      body: UnivhexPostWidget(post: Constants.TestPost),
+      body: ListView.builder(
+        itemCount: Constants.UnivhexPosts.length,
+        itemBuilder: (context, index) {
+          UnivhexPost currentPost = Constants.UnivhexPosts[index];
+          return Column(
+            children: [
+              UnivhexPostWidget(post: currentPost, height: 0),
+              PostInteractionBar(
+                post: currentPost,
+              ),
+              const Divider(
+                height: 0,
+                // indent: 10,
+                color: AppColors.obsidianInvert,
+                thickness: 0.5,
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 }
