@@ -5,6 +5,7 @@ class CurrentUser {
   static AppUser? user;
   static double? deviceWidth;
   static double? deviceHeight;
+  static bool? inPost;
 
   static addVerticalSpace(double size) {
     return SizedBox(

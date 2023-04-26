@@ -3,6 +3,7 @@ import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Widgets/appBottomNavBar.dart';
 
 class PostInteractionBar extends StatefulWidget {
   const PostInteractionBar({
@@ -36,7 +37,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                         // : const Icon(Icons.hexagon),
                         : Image.asset("assets/images/icon.png"),
                     onPressed: () {
-                      setState(() { // Like alınca veritabanına kaydedebiliriz.
+                      setState(() {
+                        // Like alınca veritabanına kaydedebiliriz.
                         !widget.post.hexedBy.contains(CurrentUser.user)
                             ? widget.post.hexedBy.add(CurrentUser.user)
                             : widget.post.hexedBy.remove(CurrentUser.user);
@@ -60,15 +62,20 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                         color: AppColors.myAqua),
                     onPressed: () {
                       // Navigate to post content page. A new page will be constructed for this.
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: ((context) => PostDetail(post: widget.post)),
-                        ),
-                      );
+                      if (CurrentUser.inPost == false ||
+                          CurrentUser.inPost == null) {
+                        CurrentUser.inPost = true;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: ((context) =>
+                                PostDetail(post: widget.post)),
+                          ),
+                        );
+                      }
                     },
                   ),
                   Text(
-                    widget.post.commentedBy.length.toString(),
+                    widget.post.commentBy.length.toString(),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),

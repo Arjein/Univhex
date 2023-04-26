@@ -4,6 +4,7 @@ import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Pages/Home/home_screen.dart';
 import 'package:univhex/Pages/Profile/ProfileScreen.dart';
+import 'package:univhex/Widgets/appBottomNavBar.dart';
 
 class UserPage extends StatefulWidget {
   final AppUser user;
@@ -15,6 +16,7 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   late final List<Widget> _widgetOptions;
+
   late int _selectedIndex;
 
   @override
@@ -33,26 +35,31 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.bgColor,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
+        body: _widgetOptions[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: onItemTapped,
+          backgroundColor: AppColors.bgColor,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ));
   }
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });

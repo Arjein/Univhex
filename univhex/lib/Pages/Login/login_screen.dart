@@ -24,10 +24,8 @@ class LoginScreen extends StatelessWidget {
                   width: 280, // To set width of our Logo. Might be modified...
                   child: Image.asset("assets/images/icon.png"),
                 ),
-                Text(
-                  "UNIVHEX",
-                  style: Theme.of(context).textTheme.headline2,
-                ),
+                Text("UNIVHEX",
+                    style: Theme.of(context).textTheme.displayMedium),
                 CurrentUser.addVerticalSpace(2.5),
                 const AppLoginForm(), // The form widget called here.
                 Row(

@@ -6,7 +6,7 @@ class UnivhexPost {
   final bool isAnonymous;
   final DateTime dateTime;
   List hexedBy = [];
-  Map<AppUser, String> commentedBy = {};
+  Map<AppUser, String> commentBy = {};
   UnivhexPost({
     required this.postedBy,
     required this.textContent,

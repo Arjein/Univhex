@@ -6,14 +6,14 @@ import 'package:univhex/Objects/app_user.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, required this.currentUser});
-  final AppUser currentUser; // Current user is required.
+  final AppUser? currentUser; // Current user is required.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 40,
         title: Text(
-          currentUser.email!,
+          currentUser!.email!,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         centerTitle: true,
@@ -63,7 +63,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 CurrentUser.addVerticalSpace(1.3),
                 Text(
-                  "${currentUser.name} ${currentUser.surname}",
+                  "${currentUser!.name} ${currentUser!.surname}",
                   style: Theme.of(context).textTheme.headline4,
                 ),
               ],
@@ -74,7 +74,7 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                currentUser.hexPoints.toString(),
+                currentUser!.hexPoints.toString(),
                 style: Theme.of(context).textTheme.headline3,
               ),
               CurrentUser.addHorizontalSpace(2),

@@ -23,11 +23,14 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: ((context) => PostDetail(post: widget.post)),
-          ),
-        );
+        if (CurrentUser.inPost == null || CurrentUser.inPost == false) {
+          CurrentUser.inPost = true;
+          debugPrint("User Inpost?: ${CurrentUser.inPost}");
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PostDetail(post: widget.post)));
+        }
       },
       onDoubleTap: () {
         setState(() {
