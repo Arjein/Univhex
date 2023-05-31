@@ -3,7 +3,6 @@ import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
-import 'package:univhex/Widgets/appBottomNavBar.dart';
 
 class PostInteractionBar extends StatefulWidget {
   const PostInteractionBar({
