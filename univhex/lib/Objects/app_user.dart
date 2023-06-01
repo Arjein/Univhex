@@ -31,10 +31,23 @@ class AppUser {
     this.hexPoints,
   });
 
-  static String serialize(AppUser model) => jsonEncode(model);
+  static String serialize(AppUser model) => json.encode(AppUser.toMap(model));
+
+  static Map<String, dynamic> toMap(AppUser model) {
+    return <String, dynamic>{
+      "Name": model.name,
+      "Surname": model.surname,
+      "Email": model.email,
+      "Password": model.password,
+      "University": model.university,
+      "FieldOfStudy": model.fieldOfStudy,
+      "YearOfStudy": model.yearOfStudy,
+      "HexPoints": model.hexPoints,
+    };
+  }
 
   factory AppUser.fromJson(Map<String, dynamic> jsonData) {
-    debugPrint("FROMJSON:\n${jsonData["LimitOrders"].runtimeType} ");
+    debugPrint("FROMJSON:\n${jsonData["Name"].runtimeType} ");
     return AppUser(
       name: jsonData["Name"],
       surname: jsonData["Surname"],
@@ -72,7 +85,7 @@ class AppUser {
     );
   }
 
-Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toFirestore() {
     return {
       "Name": name,
       "Surname": surname,

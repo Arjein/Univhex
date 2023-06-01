@@ -4,6 +4,7 @@ import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
+import 'package:univhex/Router/app_router.dart';
 
 @RoutePage(name: 'ProfilePageRoute')
 class ProfilePage extends StatelessWidget {
@@ -25,6 +26,7 @@ class ProfilePage extends StatelessWidget {
               /* TODO 
           Navigate to settings page, where user can change some required settings.
           */
+              context.router.push(SettingsRoute());
             },
             icon: const Icon(Icons.settings),
           )

@@ -28,9 +28,11 @@ void main() async {
   String? email = await UserSecureStorage.getEmail();
   String? password = await UserSecureStorage.getPassword();
   bool isLogged = await authUser(email, password);
-  debugPrint("Is Logged:" + isLogged.toString());
+  debugPrint("Is Logged: $isLogged");
+
   if (isLogged) {
     user = await UserSecureStorage.getUser();
+    debugPrint("Fethced user:" + user.toString());
     CurrentUser.user = user;
     runApp(
       InitApp(isLogged: isLogged, user: CurrentUser.user!),
@@ -42,16 +44,16 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key, required this.isLogged, this.user});
-  bool isLogged;
+  final bool isLogged;
   AppUser? user;
   List<NavigatorObserver> _createObservers() {
     return [NavigationLogger()];
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    CurrentUser.user = Constants.TestUser;
-    isLogged = true;
+    //CurrentUser.user = Constants.TestUser;
+
     return MaterialApp.router(
       title: 'Univhex',
       theme: darkTheme,
@@ -61,7 +63,7 @@ class MyApp extends StatelessWidget {
       routerDelegate: getIt<AppRouter>().delegate(
           navigatorObservers: _createObservers,
           initialRoutes: [
-            if (isLogged) AppRoute(),
+            if (isLogged) UserPageRoute(),
             if (!isLogged) AuthRoute()
           ]),
       routeInformationParser: getIt<AppRouter>().defaultRouteParser(),
@@ -81,7 +83,7 @@ class InitApp extends StatelessWidget {
         MediaQuery.of(context).size.width; // Set CurrentUser's device width.
 
     return MyApp(
-      isLogged: false,
+      isLogged: isLogged,
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/cloud_storage.dart';
 import 'package:univhex/Objects/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Router/app_router.dart';
@@ -33,17 +35,28 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: !widget.post.hexedBy.contains(CurrentUser.user)
-                        ? const Icon(Icons.hexagon_outlined)
-                        // : const Icon(Icons.hexagon),
-                        : Image.asset("assets/images/icon.png"),
-                    onPressed: () {
+                    icon:
+                        !widget.post.hexedBy.contains(CurrentUser.user!.email!)
+                            ? const Icon(Icons.hexagon_outlined)
+                            : Image.asset("assets/images/icon.png"),
+                    onPressed: () async {
+                      // UnivhexPost? retrievedPost = await readPostfromDB(widget.post);
+                      debugPrint("POST ID: ${widget.post.id}");
+                      final postsCollection =
+                          FirebaseFirestore.instance.collection('Posts');
+                      final postRef = postsCollection.doc(widget.post.id);
+                      debugPrint(postRef.toString());
+
                       setState(() {
                         // Like alınca veritabanına kaydedebiliriz.
-                        !widget.post.hexedBy.contains(CurrentUser.user)
-                            ? widget.post.hexedBy.add(CurrentUser.user)
-                            : widget.post.hexedBy.remove(CurrentUser.user);
+                        if (widget.post.hexedBy
+                            .contains(CurrentUser.user!.email!)) {
+                          widget.post.hexedBy.remove(CurrentUser.user!.email);
+                        } else {
+                          widget.post.hexedBy.add(CurrentUser.user!.email!);
+                        }
                       });
+                      postRef.update({'HexedBy': widget.post.hexedBy});
                     },
                   ),
                   Column(

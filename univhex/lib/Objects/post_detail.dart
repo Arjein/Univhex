@@ -6,10 +6,15 @@ import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
 
 @RoutePage(name: "PostDetailRoute")
-class PostDetail extends StatelessWidget {
+class PostDetail extends StatefulWidget {
   const PostDetail({super.key, required this.post});
   final UnivhexPost post;
 
+  @override
+  State<PostDetail> createState() => _PostDetailState();
+}
+
+class _PostDetailState extends State<PostDetail> {
   @override
   Widget build(BuildContext context) {
     debugPrint("This widget was built!");
@@ -22,7 +27,9 @@ class PostDetail extends StatelessWidget {
         body: Column(
           children: [
             UnivhexPostWidget(
-                post: post, height: CurrentUser.deviceHeight! * 0.05),
+              post: widget.post,
+              height: CurrentUser.deviceHeight! * 0.05,
+            ),
             //PostInteractionBar(post: post),
 
             // Comment Field
@@ -36,7 +43,7 @@ class PostDetail extends StatelessWidget {
 Future<bool> _onBackPressed() {
   // Set your variable to false here
   CurrentUser.inPost = false;
-  debugPrint("Back pressed: in post?:" + CurrentUser.inPost.toString());
+  debugPrint("Back pressed: in post?: ${CurrentUser.inPost}");
   // Return true to allow the back button to pop the current screen
   return Future.value(true);
 }

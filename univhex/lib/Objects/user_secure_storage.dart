@@ -42,6 +42,8 @@ class UserSecureStorage {
   static Future<bool> setUser(AppUser user) async {
     try {
       await _storage.write(key: _keyUser, value: AppUser.serialize(user));
+      await _storage.write(key: _keyEmail, value: user.email);
+      await _storage.write(key: _keyPassword, value: user.password);
       return true;
     } catch (e) {
       return false;

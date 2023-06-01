@@ -11,8 +11,7 @@ import 'package:univhex/Router/app_router.dart';
 
 @RoutePage(name: 'UserPageRoute')
 class UserPage extends HookWidget {
-  const UserPage({required this.user, super.key});
-  final AppUser user;
+  const UserPage({super.key});
 
   @override
   Widget build(BuildContext context) {

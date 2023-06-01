@@ -20,7 +20,6 @@ Future<bool> registerUser(AppUser user) async {
         email: user.email!, password: user.password!);
     await registerAppUserDB(user, _auth.currentUser!);
     await Future.delayed(loginTime);
-
     debugPrint("Registration Successful");
     return true;
   } catch (e) {
@@ -35,9 +34,11 @@ Future<bool> authUser(String? email, String? password) async {
     return false;
   }
   try {
+    /* Bu hash icin
     var bytes = utf8.encode(password);
-    var hash = sha256.convert(bytes).toString();
-    await _auth.signInWithEmailAndPassword(email: email, password: hash);
+    var hash = sha256.convert(bytes).toString(); 
+    */
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
     await Future.delayed(loginTime);
     UserSecureStorage.setFirebaseUID(_auth.currentUser!.uid);
     CurrentUser.firebaseUser = _auth.currentUser;

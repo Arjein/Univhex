@@ -33,8 +33,8 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
       },
       onDoubleTap: () {
         setState(() {
-          !widget.post.hexedBy.contains(CurrentUser.user)
-              ? widget.post.hexedBy.add(CurrentUser.user)
+          !widget.post.hexedBy.contains(CurrentUser.user!.email!)
+              ? widget.post.hexedBy.add(CurrentUser.user!.email!)
               : null;
         });
       },

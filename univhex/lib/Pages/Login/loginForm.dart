@@ -1,6 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/cloud_storage.dart';
+import 'package:univhex/Firebase/user_auth.dart';
+import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
 import 'package:univhex/Router/app_router.dart';
 import 'package:univhex/Router/empty_router_pages/app_router_empty.dart';
@@ -26,12 +29,12 @@ class AppLoginFormState extends State<AppLoginForm> {
   final _passwordController =
       TextEditingController(); // Controller for Password.
   String? _email;
-  String? _password;
+  String? _password = '';
 
   Future init() async {
     if (widget._email == null) {
       _email = await UserSecureStorage.getEmail() ?? '';
-      _password = await UserSecureStorage.getPassword() ?? '';
+      // _password = await UserSecureStorage.getPassword() ?? '';
       debugPrint("Init:" + _email!);
     }
     setState(() {
@@ -58,12 +61,19 @@ class AppLoginFormState extends State<AppLoginForm> {
     _loginFormKey.currentState?.save();
     if (_loginFormKey.currentState != null &&
         _loginFormKey.currentState!.validate()) {
-      debugPrint(
-          "Login Succesfull!\nSubmitted Login Form\nE-mail: $_email, Password: $_password");
-      AutoRouter.of(context).pushAndPopUntil(
-        UserPageRoute(user: CurrentUser.user!),
-        predicate: (route) => route.settings.name == '/auth',
-      );
+      if (await authUser(_email, _password)) {
+        debugPrint("User Authenticated");
+        AppUser? user = await readUserfromDB(_emailController.text);
+        if (user != null && await UserSecureStorage.setUser(user)) {
+          debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:" +
+              user.toString());
+          CurrentUser.user = user;
+
+          debugPrint(
+              "Login Succesfull!\nSubmitted Login Form\nE-mail: $_email, Password: $_password");
+          context.router.push(AppRoute());
+        }
+      }
     }
   }
 
