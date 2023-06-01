@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 
 import '../Constants/AppColors.dart';
+import '../Router/app_router.dart';
 
 class UnivhexPostWidget extends StatefulWidget {
   const UnivhexPostWidget({
@@ -26,10 +28,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
         if (CurrentUser.inPost == null || CurrentUser.inPost == false) {
           CurrentUser.inPost = true;
           debugPrint("User Inpost?: ${CurrentUser.inPost}");
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PostDetail(post: widget.post)));
+          context.router.push(PostDetailRoute(post: widget.post));
         }
       },
       onDoubleTap: () {
@@ -54,6 +53,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const CircleAvatar(
+                    backgroundColor: AppColors.obsidianInvert,
                     child: Padding(
                       padding: EdgeInsets.all(1.0),
                       child: Text("Img"),

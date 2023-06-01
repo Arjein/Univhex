@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:univhex/Constants/AppColors.dart';
 
 ThemeData darkTheme = ThemeData(
@@ -7,7 +6,7 @@ ThemeData darkTheme = ThemeData(
   // Design details for Dark Theme
   brightness: Brightness.dark,
   primarySwatch: AppColors.myPurpleMaterial,
-  fontFamily: GoogleFonts.comfortaa().fontFamily,
+  // fontFamily: GoogleFonts.comfortaa().fontFamily,
   backgroundColor: AppColors.bgColor,
   scaffoldBackgroundColor: AppColors.bgColor,
   appBarTheme:

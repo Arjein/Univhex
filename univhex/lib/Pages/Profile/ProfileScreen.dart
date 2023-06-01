@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 
+@RoutePage(name: 'ProfilePageRoute')
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, required this.currentUser});
   final AppUser? currentUser; // Current user is required.
@@ -61,10 +63,10 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                CurrentUser.addVerticalSpace(1.3),
+                CurrentUser.addVerticalSpace(1),
                 Text(
                   "${currentUser!.name} ${currentUser!.surname}",
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ],
             ),
@@ -178,7 +180,7 @@ class UserPostList extends StatelessWidget {
           child: Text(
             // This should be a minimal postview.
             'POST $index',
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         );
       }),

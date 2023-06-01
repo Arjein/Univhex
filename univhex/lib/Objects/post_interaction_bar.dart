@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Router/app_router.dart';
 
 class PostInteractionBar extends StatefulWidget {
   const PostInteractionBar({
@@ -61,15 +63,11 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                         color: AppColors.myAqua),
                     onPressed: () {
                       // Navigate to post content page. A new page will be constructed for this.
+                      debugPrint("inPost: ${CurrentUser.inPost}");
                       if (CurrentUser.inPost == false ||
                           CurrentUser.inPost == null) {
                         CurrentUser.inPost = true;
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: ((context) =>
-                                PostDetail(post: widget.post)),
-                          ),
-                        );
+                        context.router.push(PostDetailRoute(post: widget.post));
                       }
                     },
                   ),

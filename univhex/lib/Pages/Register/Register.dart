@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 
 import 'registerForm.dart';
 
+@RoutePage(name: 'RegisterPageRoute')
 class Register extends StatelessWidget {
   const Register({super.key});
 

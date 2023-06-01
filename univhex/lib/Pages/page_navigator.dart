@@ -1,67 +1,94 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Pages/Home/home_screen.dart';
 import 'package:univhex/Pages/Profile/ProfileScreen.dart';
-import 'package:univhex/Widgets/appBottomNavBar.dart';
+import 'package:univhex/Router/app_router.dart';
 
-class UserPage extends StatefulWidget {
+@RoutePage(name: 'UserPageRoute')
+class UserPage extends HookWidget {
+  const UserPage({required this.user, super.key});
   final AppUser user;
-  const UserPage({Key? key, required this.user}) : super(key: key);
-
-  @override
-  State<UserPage> createState() => _UserPageState();
-}
-
-class _UserPageState extends State<UserPage> {
-  late final List<Widget> _widgetOptions;
-
-  late int _selectedIndex;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    _selectedIndex = 0;
-    _widgetOptions = <Widget>[
-      const HomePage(),
-      ProfilePage(
-        currentUser: CurrentUser.user!,
-      ),
-    ];
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: _widgetOptions[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: onItemTapped,
-          backgroundColor: AppColors.bgColor,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+    final currentPage = useState(0);
+    return AutoTabsRouter(
+      routes: [
+        const HomePageRoute(),
+        const DiscoverPageRoute(),
+        ProfilePageRoute(currentUser: CurrentUser.user),
+      ],
+      builder: (context, child) {
+        final tabsRouter = context.tabsRouter;
+        return Scaffold(
+          extendBody: true,
+          bottomNavigationBar: AnimatedBuilder(
+            animation: tabsRouter,
+            builder: (_, __) => ClipRRect(
+              child: NavigationBar(
+                indicatorColor: AppColors.myBlue,
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.onlyShowSelected,
+                backgroundColor: AppColors.bgColor,
+                height: CurrentUser.deviceHeight! * 0.06,
+                selectedIndex: currentPage.value,
+                onDestinationSelected: (value) {
+                  switch (value) {
+                    case 0:
+                      tabsRouter.setActiveIndex(0);
+                      currentPage.value = 0;
+                      break;
+                    case 1:
+                      tabsRouter.setActiveIndex(1);
+                      currentPage.value = 1;
+                      break;
+                    case 2:
+                      tabsRouter.setActiveIndex(2);
+                      currentPage.value = 2;
+                      break;
+                    default:
+                  }
+                },
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(FluentIcons.home_32_regular),
+                    selectedIcon: Icon(FluentIcons.home_32_filled),
+                    label: 'Home',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(FluentIcons.compass_northwest_28_regular),
+                    selectedIcon: Icon(FluentIcons.compass_northwest_28_filled),
+                    label: 'Discover',
+                  ),
+                  /*
+                  NavigationDestination(
+                    icon: Icon(FluentIcons.add_48_regular),
+                    selectedIcon: Icon(FluentIcons.add_48_filled),
+                    label: 'Add',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(FluentIcons.alert_32_regular),
+                    selectedIcon: Icon(FluentIcons.alert_32_filled),
+                    label: 'Notifications',
+                  ),
+                  */
+                  NavigationDestination(
+                    icon: Icon(FluentIcons.person_48_regular),
+                    selectedIcon: Icon(FluentIcons.person_48_filled),
+                    label: 'Profile',
+                  ),
+                ],
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-        ));
-  }
-
-  void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+          ),
+          body: SizedBox(height: CurrentUser.deviceHeight! * 0.9, child: child),
+        );
+      },
+    );
   }
 }

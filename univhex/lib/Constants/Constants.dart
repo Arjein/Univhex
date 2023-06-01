@@ -29,6 +29,7 @@ class Constants {
     password: "Test",
     university: "TED University",
     yearOfStudy: "4",
+    hexPoints: 21,
   );
   static UnivhexPost TestPost = UnivhexPost(
       postedBy: TestUser,
