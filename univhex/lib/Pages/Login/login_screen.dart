@@ -15,7 +15,6 @@ class LoginScreen extends StatelessWidget {
   String? email;
   @override
   Widget build(BuildContext context) {
-    debugPrint("Buildledik bişielr");
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -48,7 +47,6 @@ class LoginScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    CurrentUser.user = Constants.TestUser;
                     context.router.push(const AppRoute());
                   },
                   child: const Text("Test Access"),

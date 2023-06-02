@@ -30,7 +30,7 @@ class UserPage extends HookWidget {
             animation: tabsRouter,
             builder: (_, __) => ClipRRect(
               child: NavigationBar(
-                indicatorColor: AppColors.myBlue,
+                indicatorColor: AppColors.bgColor,
                 labelBehavior:
                     NavigationDestinationLabelBehavior.onlyShowSelected,
                 backgroundColor: AppColors.bgColor,

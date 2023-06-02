@@ -165,6 +165,7 @@ class _registerContinueFormState extends State<registerContinueForm> {
                 onPressed: () async {
                   if (validateForm(_registerFormKey, context)) {
                     AppUser newUser = AppUser(
+                      id: "",
                       email: widget.email,
                       name: widget.name,
                       surname: widget.surname,

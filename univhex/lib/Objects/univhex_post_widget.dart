@@ -52,11 +52,26 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
-                    backgroundColor: AppColors.obsidianInvert,
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
                     child: Padding(
-                      padding: EdgeInsets.all(1.0),
-                      child: Text("Img"),
+                      padding: EdgeInsets.all(1),
+                      child: IconButton(
+                        icon: Image.asset(
+                          'assets/images/anonymous.png',
+                          fit: BoxFit.fitWidth,
+                        ),
+                        onPressed: () {
+                          debugPrint("hi");
+                          if (widget.post.postedBy!.email !=
+                              CurrentUser.user!.email) {
+                            context.router.push(ProfilePageRoute(
+                                currentUser: widget.post.postedBy!));
+                          } else {
+                            debugPrint("Same Person");
+                          }
+                        },
+                      ),
                     ),
                   ),
                   CurrentUser.addHorizontalSpace(5),

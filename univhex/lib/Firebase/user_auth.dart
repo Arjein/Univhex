@@ -18,6 +18,7 @@ Future<bool> registerUser(AppUser user) async {
     debugPrint("Email:" + user.email!);
     await _auth.createUserWithEmailAndPassword(
         email: user.email!, password: user.password!);
+    user.id = _auth.currentUser!.uid;
     await registerAppUserDB(user, _auth.currentUser!);
     await Future.delayed(loginTime);
     debugPrint("Registration Successful");

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class AppUser {
   // User Object.
+  String? id;
   final String? name;
   final String? surname;
   final String? email;
@@ -21,6 +22,7 @@ class AppUser {
   }
 
   AppUser({
+    required this.id,
     this.name,
     this.surname,
     this.email,
@@ -35,6 +37,7 @@ class AppUser {
 
   static Map<String, dynamic> toMap(AppUser model) {
     return <String, dynamic>{
+      "id": model.id,
       "Name": model.name,
       "Surname": model.surname,
       "Email": model.email,
@@ -49,6 +52,7 @@ class AppUser {
   factory AppUser.fromJson(Map<String, dynamic> jsonData) {
     debugPrint("FROMJSON:\n${jsonData["Name"].runtimeType} ");
     return AppUser(
+      id: jsonData["id"],
       name: jsonData["Name"],
       surname: jsonData["Surname"],
       email: jsonData["Email"],
@@ -74,6 +78,7 @@ class AppUser {
   ) {
     final jsonData = snapshot.data();
     return AppUser(
+      id: snapshot.id,
       name: jsonData!["Name"],
       surname: jsonData["Surname"],
       email: jsonData["Email"],
@@ -87,6 +92,7 @@ class AppUser {
 
   Map<String, dynamic> toFirestore() {
     return {
+      "id": id,
       "Name": name,
       "Surname": surname,
       "Email": email,
@@ -100,6 +106,6 @@ class AppUser {
 
   @override
   String toString() {
-    return ("Name: $name\nSurname: $surname\nemail: $email\npassword: $password\nUniversity: $university\nField: $fieldOfStudy\nyearOfStudy: $yearOfStudy");
+    return ("ID: $id, Name: $name\nSurname: $surname\nemail: $email\npassword: $password\nUniversity: $university\nField: $fieldOfStudy\nyearOfStudy: $yearOfStudy");
   }
 }

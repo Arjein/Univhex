@@ -36,15 +36,29 @@ class _AddPostWidgetState extends State<AddPostWidget> {
       height: CurrentUser.deviceHeight! * 0.2,
       child: Column(
         children: [
+          const Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: const Divider(
+              height: 0.2,
+              color: AppColors.obsidianInvert,
+              thickness: 0.5,
+            ),
+          ),
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
-                  backgroundColor: AppColors.obsidianInvert,
-                  child: Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Text("Img"),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 8),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Image.asset(
+                        'assets/images/anonymous.png',
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
                   ),
                 ),
                 PostTextArea(
@@ -82,27 +96,48 @@ class PostButton extends StatefulWidget {
   State<PostButton> createState() => _PostButtonState();
 }
 
+bool isPosting = false;
+
 class _PostButtonState extends State<PostButton> {
   @override
-  Widget build(BuildContext context) {
-    bool isPosting = false;
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          isPosting = true;
-        });
+  void handlePostButtonPressed() {
+    if (widget.textcontent == null || widget.textcontent == '') {
+      return;
+    }
+    setState(() {
+      isPosting = true;
+    });
 
-        bool isAnonymous = false;
-        _performPostOperation(isAnonymous).then((_) {
-          setState(() {
-            isPosting = false;
-          });
+    bool isAnonymous = false;
+    Future.delayed(const Duration(seconds: 1), () {
+      _performPostOperation(isAnonymous).then((_) {
+        setState(() {
+          isPosting = false;
         });
-      },
-      child: isPosting
-          ? CircularProgressIndicator() // Show the progress indicator when isPosting is true
-          : Text('Post'), // Show the "Post" text when isPosting is false
-    );
+      });
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return !isPosting
+        ? ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                disabledBackgroundColor:
+                    AppColors.myPurpleMaterial.withAlpha(1)),
+            onPressed: isPosting ? null : handlePostButtonPressed,
+            child: const Text('Post'),
+          )
+        : const Padding(
+            padding: EdgeInsets.only(right: 20.0, bottom: 12),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ); // Show the progress indicator when isPosting is true
   }
 
   _performPostOperation(bool isAnonymous) async {
@@ -147,12 +182,13 @@ class _PostTextAreaState extends State<PostTextArea> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Container(
           child: TextField(
             minLines: 6,
             maxLines: null,
-            decoration: const InputDecoration(border: InputBorder.none),
+            decoration: const InputDecoration(
+                border: InputBorder.none, hintText: "What is happening?!"),
             keyboardType: TextInputType.multiline,
             controller: _controller,
             onChanged: (text) {

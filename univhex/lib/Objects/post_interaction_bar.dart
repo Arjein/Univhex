@@ -82,6 +82,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                         CurrentUser.inPost = true;
                         context.router.push(PostDetailRoute(post: widget.post));
                       }
+                      
                     },
                   ),
                   Text(

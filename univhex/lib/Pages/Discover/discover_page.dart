@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:univhex/Constants/current_user.dart';
 
 @RoutePage(name: 'DiscoverPageRoute')
 class DiscoverPage extends StatelessWidget {
@@ -18,8 +19,13 @@ class DiscoverPage extends StatelessWidget {
         body: Column(
           children: [
             Container(
-              child: Text("sa"),
+              child: Text("Discover Page"),
             ),
+            ElevatedButton(
+                onPressed: () {
+                  debugPrint(CurrentUser.user.toString());
+                },
+                child: Text("Debug"))
           ],
         ),
       );

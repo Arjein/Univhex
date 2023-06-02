@@ -10,6 +10,7 @@ import 'package:univhex/Router/app_router.dart';
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, required this.currentUser});
   final AppUser? currentUser; // Current user is required.
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +27,7 @@ class ProfilePage extends StatelessWidget {
               /* TODO 
           Navigate to settings page, where user can change some required settings.
           */
-              context.router.push(SettingsRoute());
+              context.router.push(const SettingsRoute());
             },
             icon: const Icon(Icons.settings),
           )
@@ -51,16 +52,10 @@ class ProfilePage extends StatelessWidget {
                         aspectRatio: HexagonType.FLAT.ratio,
                         child: Center(
                           child: Image.asset(
-                            'assets/images/icon.png',
+                            'assets/images/anonymous.png',
                             fit: BoxFit.fitWidth,
                           ),
                         ),
-                        /* Image is uploaded via: 
-                        Image.asset(
-                          'assets/images/icon.png',
-                          fit: BoxFit.fitWidth,
-                        ),
-                        */
                       ),
                     ),
                   ),
@@ -111,8 +106,8 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
       child: Container(
         color: AppColors.myBlack,
         height: CurrentUser.deviceHeight! * 0.46,
-        child: Column(
-          children: const [
+        child: const Column(
+          children: [
             TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.post_add_outlined)),
@@ -145,12 +140,19 @@ class UserInformation extends StatelessWidget {
     Map<int, String> _gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
     int grade = int.parse(CurrentUser.user!.yearOfStudy!);
     String year = _gradeMap[grade]!;
-//
+    String name = CurrentUser.user!.name![0].toUpperCase() +
+        CurrentUser.user!.name!.substring(1);
+    String surname = CurrentUser.user!.surname![0].toUpperCase() +
+        CurrentUser.user!.surname!.substring(1);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(CurrentUser.user!.university!),
+          Center(child: Text(CurrentUser.user!.university!)),
+          CurrentUser.addVerticalSpace(2),
+          Text("$name $surname"),
           CurrentUser.addVerticalSpace(2),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

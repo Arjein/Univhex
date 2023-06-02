@@ -52,6 +52,7 @@ Future<bool> addNewPostDB(UnivhexPost newPost) async {
 
 Future<AppUser?> readUserfromDB(String email) async {
   try {
+    debugPrint("Burdamı patliyor acaba?");
     final ref = FirebaseFirestore.instance
         .collection("Users")
         .where('Email', isEqualTo: email)
