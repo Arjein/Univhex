@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Objects/post_detail.dart';
+import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Pages/Discover/discover_page.dart';
 import 'package:univhex/Pages/Register/Register.dart';

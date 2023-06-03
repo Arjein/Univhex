@@ -7,29 +7,20 @@ import 'package:univhex/Firebase/cloud_storage.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Router/app_router.dart';
 
-import 'app_user.dart';
+import '../../Objects/app_user.dart';
 
 class AddPostWidget extends StatefulWidget {
-  const AddPostWidget({super.key});
-
+  const AddPostWidget({super.key, required this.callback});
+  final Future<void> Function() callback;
   @override
   State<AddPostWidget> createState() => _AddPostWidgetState();
 }
 
 class _AddPostWidgetState extends State<AddPostWidget> {
-  String? postText;
-
-  void handlePost(String text) {
-    // Process the text, e.g., make the post or update a state variable
-    print('Received text: $text');
-    setState(() {
-      postText = text;
-    });
-  }
+  final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    bool isPosting = false;
     bool isAnonymous = false; // Set this flag to true for anonymous posts
 
     return SizedBox(
@@ -37,8 +28,8 @@ class _AddPostWidgetState extends State<AddPostWidget> {
       child: Column(
         children: [
           const Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: const Divider(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Divider(
               height: 0.2,
               color: AppColors.obsidianInvert,
               thickness: 0.5,
@@ -62,12 +53,13 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                   ),
                 ),
                 PostTextArea(
-                  onTextChanged: handlePost,
+                  controller: controller,
                 ),
                 Container(
                   alignment: Alignment.bottomCenter,
                   child: PostButton(
-                    textcontent: postText,
+                    callbackFunction: widget.callback,
+                    controller: controller,
                   ),
                 ),
               ],
@@ -84,24 +76,25 @@ class _AddPostWidgetState extends State<AddPostWidget> {
 }
 
 class PostButton extends StatefulWidget {
-  const PostButton({
+  PostButton({
     super.key,
-    required this.textcontent,
+    required this.callbackFunction,
+    required this.controller,
   });
+  final Future<void> Function() callbackFunction;
+  final TextEditingController controller;
 
   // Needed for univhex Post
-  final String? textcontent;
 
   @override
   State<PostButton> createState() => _PostButtonState();
 }
 
-bool isPosting = false;
-
 class _PostButtonState extends State<PostButton> {
+  bool isPosting = false;
   @override
   void handlePostButtonPressed() {
-    if (widget.textcontent == null || widget.textcontent == '') {
+    if (widget.controller.text == null || widget.controller.text == '') {
       return;
     }
     setState(() {
@@ -114,6 +107,8 @@ class _PostButtonState extends State<PostButton> {
         setState(() {
           isPosting = false;
         });
+        widget.callbackFunction();
+        widget.controller.clear();
       });
     });
   }
@@ -146,14 +141,14 @@ class _PostButtonState extends State<PostButton> {
     UnivhexPost newPost = UnivhexPost(
       id: "",
       postedBy: CurrentUser.user,
-      textContent: widget.textcontent!,
+      university: CurrentUser.user!.university!,
+      textContent: widget.controller.text,
       isAnonymous: isAnonymous,
       dateTime: dateTime,
       hexedBy: [],
-      commentBy: {},
+      comments: [],
     );
-    debugPrint(newPost.textContent);
-    debugPrint(newPost.dateTime.toString());
+
     if (await addNewPostDB(newPost)) {
       debugPrint("Post successfully added to Database!");
     }
@@ -163,16 +158,15 @@ class _PostButtonState extends State<PostButton> {
 class PostTextArea extends StatefulWidget {
   const PostTextArea({
     super.key,
-    required this.onTextChanged,
+    required this.controller,
   });
-  final Function(String) onTextChanged;
 
+  final TextEditingController controller;
   @override
   State<PostTextArea> createState() => _PostTextAreaState();
 }
 
 class _PostTextAreaState extends State<PostTextArea> {
-  final TextEditingController _controller = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -190,9 +184,9 @@ class _PostTextAreaState extends State<PostTextArea> {
             decoration: const InputDecoration(
                 border: InputBorder.none, hintText: "What is happening?!"),
             keyboardType: TextInputType.multiline,
-            controller: _controller,
+            controller: widget.controller,
             onChanged: (text) {
-              widget.onTextChanged(text);
+              debugPrint(widget.controller.text);
             },
           ),
         ),

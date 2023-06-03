@@ -1,10 +1,15 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Objects/app_comment.dart';
+import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/post_interaction_bar.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
+
+import '../../Objects/comment_widget.dart';
 
 @RoutePage(name: "PostDetailRoute")
 class PostDetail extends StatefulWidget {
@@ -20,13 +25,14 @@ class _PostDetailState extends State<PostDetail> {
   @override
   Widget build(BuildContext context) {
     debugPrint("This widget was built!");
+
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Post Flood"),
         ),
-        body: Column(
+        body: ListView(
           children: [
             UnivhexPostWidget(
               post: widget.post,
@@ -44,6 +50,18 @@ class _PostDetailState extends State<PostDetail> {
               thickness: 0.5,
             ),
             CurrentUser.addVerticalSpace(2),
+            if (widget.post.comments.isNotEmpty)
+              SizedBox(
+                height: CurrentUser.deviceHeight! * 0.56,
+                child: ListView.builder(
+                  itemCount: widget.post.comments.length,
+                  itemBuilder: (context, index) {
+                    return CommentWidget(
+                        comment:
+                            AppComment.fromJson(widget.post.comments[index]));
+                  },
+                ),
+              ),
             // Comment Field
             TextField(
               minLines: 1,
@@ -73,9 +91,17 @@ class _PostDetailState extends State<PostDetail> {
                         BorderSide(color: AppColors.myLightBlue, width: 1.0),
                   ),
                   hintText: "Leave a comment!",
-                  suffix: TextButton(
+                  suffixIcon: TextButton(
                       onPressed: () {
                         // TODO Leave Comment
+                        AppComment comment = AppComment(
+                          userid: CurrentUser.user!.id!,
+                          textContent: _controller.text,
+                          dateTime: DateTime.now(),
+                        );
+                        setState(() {
+                          widget.post.addComment(comment);
+                        });
                       },
                       child: Text("Share"))),
               keyboardType: TextInputType.multiline,

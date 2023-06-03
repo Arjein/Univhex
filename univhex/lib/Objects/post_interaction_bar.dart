@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/cloud_storage.dart';
-import 'package:univhex/Objects/post_detail.dart';
+import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Router/app_router.dart';
 
@@ -21,6 +21,7 @@ class PostInteractionBar extends StatefulWidget {
 class _PostInteractionBarState extends State<PostInteractionBar> {
   @override
   Widget build(BuildContext context) {
+    debugPrint(widget.post.toString());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -40,12 +41,10 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                             ? const Icon(Icons.hexagon_outlined)
                             : Image.asset("assets/images/icon.png"),
                     onPressed: () async {
-                      // UnivhexPost? retrievedPost = await readPostfromDB(widget.post);
                       debugPrint("POST ID: ${widget.post.id}");
                       final postsCollection =
                           FirebaseFirestore.instance.collection('Posts');
                       final postRef = postsCollection.doc(widget.post.id);
-                      debugPrint(postRef.toString());
 
                       setState(() {
                         // Like alınca veritabanına kaydedebiliriz.
@@ -56,6 +55,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                           widget.post.hexedBy.add(CurrentUser.user!.email!);
                         }
                       });
+
                       postRef.update({'HexedBy': widget.post.hexedBy});
                     },
                   ),
@@ -76,17 +76,17 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                         color: AppColors.myAqua),
                     onPressed: () {
                       // Navigate to post content page. A new page will be constructed for this.
+
                       debugPrint("inPost: ${CurrentUser.inPost}");
                       if (CurrentUser.inPost == false ||
                           CurrentUser.inPost == null) {
                         CurrentUser.inPost = true;
                         context.router.push(PostDetailRoute(post: widget.post));
                       }
-                      
                     },
                   ),
                   Text(
-                    widget.post.commentBy.length.toString(),
+                    widget.post.comments.length.toString(),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),

@@ -50,7 +50,6 @@ class AppUser {
   }
 
   factory AppUser.fromJson(Map<String, dynamic> jsonData) {
-    debugPrint("FROMJSON:\n${jsonData["Name"].runtimeType} ");
     return AppUser(
       id: jsonData["id"],
       name: jsonData["Name"],
