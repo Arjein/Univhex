@@ -39,49 +39,41 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
         color: AppColors.bgColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              // height: CurrentUser.deviceHeight! * 0.05,
-              // height: height,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.all(1),
-                      child: IconButton(
-                        icon: Image.asset(
-                          'assets/images/anonymous.png',
-                          fit: BoxFit.fitWidth,
-                        ),
-                        onPressed: () {
-                          if (widget.post.postedBy!.email !=
-                              CurrentUser.user!.email) {
-                            context.router.push(ProfilePageRoute(
-                                currentUser: widget.post.postedBy!));
-                          } else {
-                            debugPrint("Same Person");
-                          }
-                        },
-                      ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: IconButton(
+                    icon: Image.asset(
+                      'assets/images/anonymous.png',
+                      fit: BoxFit.fitWidth,
                     ),
+                    onPressed: () {
+                      if (widget.post.postedBy!.email !=
+                          CurrentUser.user!.email) {
+                        context.router.push(ProfilePageRoute(
+                            currentUser: widget.post.postedBy!));
+                      } else {
+                        debugPrint("Same Person");
+                      }
+                    },
                   ),
-                  CurrentUser.addHorizontalSpace(5),
-                  Text(
-                    !widget.post.isAnonymous
-                        ? "${widget.post.postedBy!.name} ${widget.post.postedBy!.surname}"
-                        : "Anonymous",
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                ],
-              ),
+                ),
+                CurrentUser.addHorizontalSpace(2),
+                Text(
+                  !widget.post.isAnonymous
+                      ? "${widget.post.postedBy!.name} ${widget.post.postedBy!.surname}"
+                      : "Anonymous",
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),

@@ -18,11 +18,9 @@ class AddPostWidget extends StatefulWidget {
 
 class _AddPostWidgetState extends State<AddPostWidget> {
   final TextEditingController controller = TextEditingController();
-
+  bool isAnonymous = false; // Set this flag to true for anonymous posts
   @override
   Widget build(BuildContext context) {
-    bool isAnonymous = false; // Set this flag to true for anonymous posts
-
     return SizedBox(
       height: CurrentUser.deviceHeight! * 0.2,
       child: Column(
@@ -39,18 +37,34 @@ class _AddPostWidgetState extends State<AddPostWidget> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, top: 8),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Image.asset(
-                        'assets/images/anonymous.png',
-                        fit: BoxFit.fitWidth,
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, top: 8),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Image.asset(
+                            'assets/images/anonymous.png',
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Switch(
+                      // This bool value toggles the switch.
+                      value: isAnonymous,
+                      activeColor: AppColors.myBlue,
+                      inactiveThumbColor: AppColors.myPurple,
+                      onChanged: (bool value) {
+                        // This is called when the user toggles the switch.
+                        setState(() {
+                          isAnonymous = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
                 PostTextArea(
                   controller: controller,
@@ -60,6 +74,7 @@ class _AddPostWidgetState extends State<AddPostWidget> {
                   child: PostButton(
                     callbackFunction: widget.callback,
                     controller: controller,
+                    isAnonymous: isAnonymous,
                   ),
                 ),
               ],
@@ -80,10 +95,11 @@ class PostButton extends StatefulWidget {
     super.key,
     required this.callbackFunction,
     required this.controller,
+    required this.isAnonymous,
   });
   final Future<void> Function() callbackFunction;
   final TextEditingController controller;
-
+  final bool isAnonymous;
   // Needed for univhex Post
 
   @override
@@ -92,6 +108,7 @@ class PostButton extends StatefulWidget {
 
 class _PostButtonState extends State<PostButton> {
   bool isPosting = false;
+
   @override
   void handlePostButtonPressed() {
     if (widget.controller.text == null || widget.controller.text == '') {
@@ -101,9 +118,8 @@ class _PostButtonState extends State<PostButton> {
       isPosting = true;
     });
 
-    bool isAnonymous = false;
     Future.delayed(const Duration(seconds: 1), () {
-      _performPostOperation(isAnonymous).then((_) {
+      _performPostOperation(widget.isAnonymous).then((_) {
         setState(() {
           isPosting = false;
         });
@@ -117,8 +133,9 @@ class _PostButtonState extends State<PostButton> {
     return !isPosting
         ? ElevatedButton(
             style: ElevatedButton.styleFrom(
-                disabledBackgroundColor:
-                    AppColors.myPurpleMaterial.withAlpha(1)),
+                backgroundColor:
+                    widget.isAnonymous ? AppColors.myBlue : AppColors.myPurple,
+                disabledBackgroundColor: AppColors.myAqua.withAlpha(1)),
             onPressed: isPosting ? null : handlePostButtonPressed,
             child: const Text('Post'),
           )
@@ -177,7 +194,10 @@ class _PostTextAreaState extends State<PostTextArea> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Container(
+        child: GestureDetector(
+          onTap: () {
+            debugPrint("statement");
+          },
           child: TextField(
             minLines: 6,
             maxLines: null,

@@ -64,18 +64,13 @@ class UserPage extends HookWidget {
                     selectedIcon: Icon(FluentIcons.compass_northwest_28_filled),
                     label: 'Discover',
                   ),
-                  /*
-                  NavigationDestination(
-                    icon: Icon(FluentIcons.add_48_regular),
-                    selectedIcon: Icon(FluentIcons.add_48_filled),
-                    label: 'Add',
-                  ),
+                  
                   NavigationDestination(
                     icon: Icon(FluentIcons.alert_32_regular),
                     selectedIcon: Icon(FluentIcons.alert_32_filled),
                     label: 'Notifications',
                   ),
-                  */
+
                   NavigationDestination(
                     icon: Icon(FluentIcons.person_48_regular),
                     selectedIcon: Icon(FluentIcons.person_48_filled),

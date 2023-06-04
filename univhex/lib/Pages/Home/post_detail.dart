@@ -32,7 +32,7 @@ class _PostDetailState extends State<PostDetail> {
         appBar: AppBar(
           title: const Text("Post Flood"),
         ),
-        body: ListView(
+        body: Column(
           children: [
             UnivhexPostWidget(
               post: widget.post,
@@ -49,64 +49,76 @@ class _PostDetailState extends State<PostDetail> {
               color: AppColors.obsidianInvert,
               thickness: 0.5,
             ),
-            CurrentUser.addVerticalSpace(2),
-            if (widget.post.comments.isNotEmpty)
-              SizedBox(
-                height: CurrentUser.deviceHeight! * 0.56,
-                child: ListView.builder(
-                  itemCount: widget.post.comments.length,
-                  itemBuilder: (context, index) {
-                    return CommentWidget(
-                        comment:
-                            AppComment.fromJson(widget.post.comments[index]));
-                  },
-                ),
-              ),
-            // Comment Field
-            TextField(
-              minLines: 1,
-              maxLines: 6,
-              decoration: InputDecoration(
-                  icon: SizedBox(
-                    width: 30,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: SizedBox(
-                        width: 22,
-                        child: Image.asset(
-                          'assets/images/anonymous.png',
-                          fit: BoxFit.fitWidth,
+
+            const Divider(
+              height: 0.2,
+              color: AppColors.myAqua,
+              thickness: 1,
+            ),
+            CurrentUser.addVerticalSpace(1),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  widget.post.comments.isNotEmpty
+                      ? Expanded(
+                          child: ListView.builder(
+                            itemCount: widget.post.comments.length,
+                            itemBuilder: (context, index) {
+                              return CommentWidget(
+                                  comment: AppComment.fromJson(
+                                      widget.post.comments[index]));
+                            },
+                          ),
+                        )
+                      : Container(),
+                  TextField(
+                    minLines: 1,
+                    maxLines: 6,
+                    decoration: InputDecoration(
+                      prefixIcon: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: SizedBox(
+                          width: 22,
+                          child: Image.asset(
+                            'assets/images/anonymous.png',
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: AppColors.myPurple,
-                        width: 1.0,
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: AppColors.myPurple,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(24)),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.myLightBlue, width: 1.0),
                       ),
-                      borderRadius: BorderRadius.circular(24)),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.myLightBlue, width: 1.0),
+                      hintText: "Leave a comment!",
+                      suffixIcon: TextButton(
+                        onPressed: () {
+                          // TODO Leave Comment
+                          AppComment comment = AppComment(
+                            userid: CurrentUser.user!.id!,
+                            textContent: _controller.text,
+                            dateTime: DateTime.now(),
+                          );
+                          setState(() {
+                            widget.post.addComment(comment);
+                          });
+                        },
+                        child: const Text("Share"),
+                      ),
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    controller: _controller,
                   ),
-                  hintText: "Leave a comment!",
-                  suffixIcon: TextButton(
-                      onPressed: () {
-                        // TODO Leave Comment
-                        AppComment comment = AppComment(
-                          userid: CurrentUser.user!.id!,
-                          textContent: _controller.text,
-                          dateTime: DateTime.now(),
-                        );
-                        setState(() {
-                          widget.post.addComment(comment);
-                        });
-                      },
-                      child: Text("Share"))),
-              keyboardType: TextInputType.multiline,
-              controller: _controller,
-            ),
+                ],
+              ),
+            )
+            // Comment Field
           ],
         ),
       ),
