@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Pages/Home/home_screen.dart';
-import 'package:univhex/Pages/Profile/ProfileScreen.dart';
 import 'package:univhex/Router/app_router.dart';
 
 @RoutePage(name: 'UserPageRoute')
@@ -64,13 +61,6 @@ class UserPage extends HookWidget {
                     selectedIcon: Icon(FluentIcons.compass_northwest_28_filled),
                     label: 'Discover',
                   ),
-                  
-                  NavigationDestination(
-                    icon: Icon(FluentIcons.alert_32_regular),
-                    selectedIcon: Icon(FluentIcons.alert_32_filled),
-                    label: 'Notifications',
-                  ),
-
                   NavigationDestination(
                     icon: Icon(FluentIcons.person_48_regular),
                     selectedIcon: Icon(FluentIcons.person_48_filled),

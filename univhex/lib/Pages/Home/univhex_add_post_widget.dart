@@ -6,7 +6,6 @@ import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/cloud_storage.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Router/app_router.dart';
-
 import '../../Objects/app_user.dart';
 
 class AddPostWidget extends StatefulWidget {
