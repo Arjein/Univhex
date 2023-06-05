@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    SettingsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SettingsPage(),
+      );
+    },
     PostDetailRoute.name: (routeData) {
       final args = routeData.argsAs<PostDetailRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -22,6 +28,7 @@ abstract class _$AppRouter extends RootStackRouter {
         child: PostDetail(
           key: args.key,
           post: args.post,
+          autoFocus: args.autoFocus,
         ),
       );
     },
@@ -62,7 +69,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: ProfilePage(
           key: args.key,
-          currentUser: args.currentUser,
+          user: args.user,
         ),
       );
     },
@@ -95,13 +102,21 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const AppRouterPage(),
       );
     },
-    SettingsRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SettingsPage(),
-      );
-    },
   };
+}
+
+/// generated route for
+/// [SettingsPage]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SettingsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -110,12 +125,14 @@ class PostDetailRoute extends PageRouteInfo<PostDetailRouteArgs> {
   PostDetailRoute({
     Key? key,
     required UnivhexPost post,
+    required bool autoFocus,
     List<PageRouteInfo>? children,
   }) : super(
           PostDetailRoute.name,
           args: PostDetailRouteArgs(
             key: key,
             post: post,
+            autoFocus: autoFocus,
           ),
           initialChildren: children,
         );
@@ -130,15 +147,18 @@ class PostDetailRouteArgs {
   const PostDetailRouteArgs({
     this.key,
     required this.post,
+    required this.autoFocus,
   });
 
   final Key? key;
 
   final UnivhexPost post;
 
+  final bool autoFocus;
+
   @override
   String toString() {
-    return 'PostDetailRouteArgs{key: $key, post: $post}';
+    return 'PostDetailRouteArgs{key: $key, post: $post, autoFocus: $autoFocus}';
   }
 }
 
@@ -242,13 +262,13 @@ class RegisterContinueRouteArgs {
 class ProfilePageRoute extends PageRouteInfo<ProfilePageRouteArgs> {
   ProfilePageRoute({
     Key? key,
-    required AppUser? currentUser,
+    required AppUser? user,
     List<PageRouteInfo>? children,
   }) : super(
           ProfilePageRoute.name,
           args: ProfilePageRouteArgs(
             key: key,
-            currentUser: currentUser,
+            user: user,
           ),
           initialChildren: children,
         );
@@ -262,16 +282,16 @@ class ProfilePageRoute extends PageRouteInfo<ProfilePageRouteArgs> {
 class ProfilePageRouteArgs {
   const ProfilePageRouteArgs({
     this.key,
-    required this.currentUser,
+    required this.user,
   });
 
   final Key? key;
 
-  final AppUser? currentUser;
+  final AppUser? user;
 
   @override
   String toString() {
-    return 'ProfilePageRouteArgs{key: $key, currentUser: $currentUser}';
+    return 'ProfilePageRouteArgs{key: $key, user: $user}';
   }
 }
 
@@ -351,20 +371,6 @@ class AppRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'AppRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [SettingsPage]
-class SettingsRoute extends PageRouteInfo<void> {
-  const SettingsRoute({List<PageRouteInfo>? children})
-      : super(
-          SettingsRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'SettingsRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

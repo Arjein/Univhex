@@ -9,12 +9,12 @@ class AppUser {
   final String? name;
   final String? surname;
   final String? email;
-  String? password;
+  final String? password;
   final String? university;
   final String? fieldOfStudy;
   final String? yearOfStudy;
-  String? imgURL;
-  int? hexPoints = 0;
+  String? imgUrl;
+  final int? hexPoints;
   // we might hash password
   String hashPassword(String password) {
     var bytes = utf8.encode(password);
@@ -30,6 +30,7 @@ class AppUser {
     this.university,
     this.fieldOfStudy,
     this.yearOfStudy,
+    this.imgUrl,
     this.hexPoints,
   });
 
@@ -45,6 +46,7 @@ class AppUser {
       "University": model.university,
       "FieldOfStudy": model.fieldOfStudy,
       "YearOfStudy": model.yearOfStudy,
+      "ImgUrl": model.imgUrl,
       "HexPoints": model.hexPoints,
     };
   }
@@ -59,6 +61,7 @@ class AppUser {
       university: jsonData["University"],
       fieldOfStudy: jsonData["FieldOfStudy"],
       yearOfStudy: jsonData["YearOfStudy"],
+      imgUrl: jsonData["ImgUrl"],
       hexPoints: jsonData["HexPoints"],
     );
   }
@@ -85,6 +88,7 @@ class AppUser {
       university: jsonData["University"],
       fieldOfStudy: jsonData["FieldOfStudy"],
       yearOfStudy: jsonData["YearOfStudy"],
+      imgUrl: jsonData["ImgUrl"],
       hexPoints: jsonData["HexPoints"],
     );
   }
@@ -99,6 +103,7 @@ class AppUser {
       "University": university,
       "FieldOfStudy": fieldOfStudy,
       "YearOfStudy": yearOfStudy,
+      "ImgUrl": imgUrl,
       "HexPoints": hexPoints,
     };
   }

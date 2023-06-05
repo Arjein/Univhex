@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Firebase/cloud_storage.dart';
+import 'package:univhex/Firebase/firestore.dart';
 
 import 'package:univhex/Objects/post_interaction_bar.dart';
 import 'package:univhex/Pages/Home/univhex_add_post_widget.dart';
@@ -37,9 +37,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Container(
+            padding: EdgeInsets.only(left: 13),
+            child: Image.asset("assets/images/icon.png")),
         title: Text(CurrentUser.user!.university!.toString()),
       ),
       body: RefreshIndicator(
+        color: AppColors.myAqua,
+        backgroundColor: AppColors.myPurple,
         displacement: 0,
         onRefresh: _refreshFeed,
         child: FutureBuilder<List<UnivhexPost>>(
@@ -52,8 +57,6 @@ class _HomePageState extends State<HomePage> {
               return Center(child: Text("Error Occurred ${snapshot.error}"));
             } else {
               List<UnivhexPost> dataList = snapshot.data ?? [];
-              debugPrint("DataList length:" + dataList.length.toString());
-              debugPrint("IsRefreshing:" + isRefreshing.toString());
               return CustomScrollView(
                 slivers: [
                   isRefreshing
@@ -69,14 +72,25 @@ class _HomePageState extends State<HomePage> {
                   if (dataList.isNotEmpty)
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
+                        addRepaintBoundaries: false,
                         (context, index) {
                           UnivhexPost currentPost = dataList[index];
-                          debugPrint(currentPost.toString());
+
                           return Column(
                             children: [
-                              UnivhexPostWidget(
-                                post: currentPost,
-                                height: 0,
+                              GestureDetector(
+                                onDoubleTap: () {
+                                  setState(() {
+                                    if (!currentPost.hexedBy
+                                        .contains(CurrentUser.user!.email)) {
+                                      currentPost.addLike();
+                                    }
+                                  });
+                                },
+                                child: UnivhexPostWidget(
+                                  post: currentPost,
+                                  height: 0,
+                                ),
                               ),
                               PostInteractionBar(post: currentPost),
                               const Divider(

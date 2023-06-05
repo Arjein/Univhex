@@ -6,6 +6,7 @@ ThemeData darkTheme = ThemeData(
   // Design details for Dark Theme
   brightness: Brightness.dark,
   primarySwatch: AppColors.myPurpleMaterial,
+
   // fontFamily: GoogleFonts.comfortaa().fontFamily,
   backgroundColor: AppColors.bgColor,
   scaffoldBackgroundColor: AppColors.bgColor,

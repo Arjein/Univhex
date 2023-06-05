@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Firebase/cloud_storage.dart';
+import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Router/app_router.dart';
@@ -36,27 +36,13 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon:
-                        !widget.post.hexedBy.contains(CurrentUser.user!.email!)
-                            ? const Icon(Icons.hexagon_outlined)
-                            : Image.asset("assets/images/icon.png"),
+                    icon: !widget.post.hexedBy.contains(CurrentUser.user!.id)
+                        ? const Icon(Icons.hexagon_outlined)
+                        : Image.asset("assets/images/icon.png"),
                     onPressed: () async {
-                      debugPrint("POST ID: ${widget.post.id}");
-                      final postsCollection =
-                          FirebaseFirestore.instance.collection('Posts');
-                      final postRef = postsCollection.doc(widget.post.id);
-
                       setState(() {
-                        // Like alınca veritabanına kaydedebiliriz.
-                        if (widget.post.hexedBy
-                            .contains(CurrentUser.user!.email!)) {
-                          widget.post.hexedBy.remove(CurrentUser.user!.email);
-                        } else {
-                          widget.post.hexedBy.add(CurrentUser.user!.email!);
-                        }
+                        widget.post.addLike();
                       });
-
-                      postRef.update({'HexedBy': widget.post.hexedBy});
                     },
                   ),
                   Column(
@@ -81,7 +67,9 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                       if (CurrentUser.inPost == false ||
                           CurrentUser.inPost == null) {
                         CurrentUser.inPost = true;
-                        context.router.push(PostDetailRoute(post: widget.post));
+                        context.router.push(
+                          PostDetailRoute(post: widget.post, autoFocus: true),
+                        );
                       }
                     },
                   ),
@@ -94,8 +82,8 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
               ),
               IconButton(
                 alignment: Alignment.centerRight,
-                icon:
-                    const Icon(Icons.flag_outlined, color: AppColors.myPurple),
+                icon: const Icon(Icons.more_horiz,
+                    color: AppColors.obsidianInvert),
                 onPressed: () {},
               ),
             ],

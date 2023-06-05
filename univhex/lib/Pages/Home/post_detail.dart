@@ -13,17 +13,28 @@ import '../../Objects/comment_widget.dart';
 
 @RoutePage(name: "PostDetailRoute")
 class PostDetail extends StatefulWidget {
-  const PostDetail({super.key, required this.post});
+  const PostDetail({super.key, required this.post, required this.autoFocus});
   final UnivhexPost post;
-
+  final bool autoFocus;
   @override
   State<PostDetail> createState() => _PostDetailState();
 }
 
 class _PostDetailState extends State<PostDetail> {
   TextEditingController _controller = TextEditingController();
+
+  late ImageProvider<Object> _avatarImageProvider;
+  void _loadAvatarImage() {
+    if (CurrentUser.user!.imgUrl == "assets/images/icon.png") {
+      _avatarImageProvider = AssetImage("assets/images/icon.png");
+    } else {
+      _avatarImageProvider = NetworkImage(CurrentUser.user!.imgUrl!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _loadAvatarImage();
     debugPrint("This widget was built!");
 
     return WillPopScope(
@@ -34,9 +45,18 @@ class _PostDetailState extends State<PostDetail> {
         ),
         body: Column(
           children: [
-            UnivhexPostWidget(
-              post: widget.post,
-              height: CurrentUser.deviceHeight! * 0.05,
+            GestureDetector(
+              onDoubleTap: () {
+                setState(() {
+                  if (!widget.post.hexedBy.contains(CurrentUser.user!.email)) {
+                    widget.post.addLike();
+                  }
+                });
+              },
+              child: UnivhexPostWidget(
+                post: widget.post,
+                height: CurrentUser.deviceHeight! * 0.05,
+              ),
             ),
             const Divider(
               height: 0,
@@ -72,48 +92,58 @@ class _PostDetailState extends State<PostDetail> {
                           ),
                         )
                       : Container(),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                      prefixIcon: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: SizedBox(
-                          width: 22,
-                          child: Image.asset(
-                            'assets/images/anonymous.png',
-                            fit: BoxFit.fitWidth,
+                  Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+                            child: CircleAvatar(
+                              backgroundImage: _avatarImageProvider,
+                            ),
                           ),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: AppColors.myPurple,
-                            width: 1.0,
+                          Expanded(
+                            child: TextField(
+                              autofocus: widget.autoFocus,
+                              keyboardType: TextInputType.name,
+                              controller: _controller,
+                              minLines: 1,
+                              maxLines: 4,
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: AppColors.myPurple,
+                                      width: 1.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16)),
+                                enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: AppColors.myLightBlue, width: 1.0),
+                                ),
+                                hintText: "Leave a comment!",
+                                suffixIcon: TextButton(
+                                  onPressed: () {
+                                    AppComment comment = AppComment(
+                                      userid: CurrentUser.user!.id!,
+                                      textContent: _controller.text,
+                                      dateTime: DateTime.now(),
+                                    );
+                                    setState(() {
+                                      widget.post.addComment(comment);
+                                      _controller.clear();
+                                    });
+                                  },
+                                  child: const Text("Share"),
+                                ),
+                              ),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(24)),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: AppColors.myLightBlue, width: 1.0),
+                          CurrentUser.addHorizontalSpace(2.5)
+                        ],
                       ),
-                      hintText: "Leave a comment!",
-                      suffixIcon: TextButton(
-                        onPressed: () {
-                          // TODO Leave Comment
-                          AppComment comment = AppComment(
-                            userid: CurrentUser.user!.id!,
-                            textContent: _controller.text,
-                            dateTime: DateTime.now(),
-                          );
-                          setState(() {
-                            widget.post.addComment(comment);
-                          });
-                        },
-                        child: const Text("Share"),
-                      ),
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    controller: _controller,
+                      CurrentUser.addVerticalSpace(2),
+                    ],
                   ),
                 ],
               ),

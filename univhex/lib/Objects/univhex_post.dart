@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Objects/app_comment.dart';
 import 'package:univhex/Objects/app_user.dart';
 
 class UnivhexPost {
   final String id;
-  final AppUser? postedBy;
+  final String? authorId;
   final String textContent;
   final bool isAnonymous;
   final DateTime dateTime;
@@ -15,7 +17,7 @@ class UnivhexPost {
 
   UnivhexPost({
     required this.id,
-    required this.postedBy,
+    required this.authorId,
     required this.textContent,
     required this.isAnonymous,
     required this.dateTime,
@@ -23,6 +25,11 @@ class UnivhexPost {
     required this.comments,
     required this.university,
   });
+
+  Future<AppUser> retrieveAuthor() async {
+    AppUser? retrievedUser = await readUserfromDB(authorId!);
+    return retrievedUser!;
+  }
 
   factory UnivhexPost.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -32,7 +39,7 @@ class UnivhexPost {
     final jsonData = snapshot.data();
     UnivhexPost fetchedPost = UnivhexPost(
       id: snapshot.id,
-      postedBy: AppUser.fromJson(jsonData!["User"]),
+      authorId: jsonData!["AuthorId"],
       university: jsonData["University"],
       textContent: jsonData["TextContent"],
       isAnonymous: jsonData["isAnonymous"],
@@ -49,20 +56,35 @@ class UnivhexPost {
 
     return fetchedPost;
   }
+
+// Add like to post
+  void addLike() {
+    final postsCollection = FirebaseFirestore.instance.collection('Posts');
+    final postRef = postsCollection.doc(id);
+
+    // Like alınca veritabanına kaydedebiliriz.
+    if (hexedBy.contains(CurrentUser.user!.id)) {
+      hexedBy.remove(CurrentUser.user!.id);
+    } else {
+      hexedBy.add(CurrentUser.user!.id);
+    }
+
+    postRef.update({'HexedBy': hexedBy});
+  }
+
 // ADDs comment to a post
   void addComment(AppComment comment) {
     final postsCollection = FirebaseFirestore.instance.collection('Posts');
     final postRef = postsCollection.doc(id);
-    debugPrint(postRef.toString());
+
     comments.add(comment.toFirestore());
     postRef.update({'Comments': comments});
   }
 
   Map<String, dynamic> toFirestore() {
-    debugPrint("TOFIRESTORE (POST)");
     return {
       "id": id,
-      "User": postedBy!.toFirestore(),
+      "AuthorId": authorId,
       "University": university,
       "TextContent": textContent,
       "isAnonymous": isAnonymous,
@@ -75,6 +97,6 @@ class UnivhexPost {
   @override
   String toString() {
     // TODO: implement toString
-    return "Posted By: ${postedBy.toString()}, at ${dateTime.toString()}";
+    return "Posted By: ${authorId.toString()}, at ${dateTime.toString()}";
   }
 }

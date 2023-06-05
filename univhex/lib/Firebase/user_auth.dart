@@ -7,7 +7,7 @@ import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
 
-import 'cloud_storage.dart';
+import 'firestore.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 Duration loginTime = const Duration(milliseconds: 1600);

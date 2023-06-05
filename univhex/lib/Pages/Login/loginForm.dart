@@ -1,13 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Firebase/cloud_storage.dart';
+import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Firebase/user_auth.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
 import 'package:univhex/Router/app_router.dart';
 import 'package:univhex/Router/empty_router_pages/app_router_empty.dart';
-import 'package:univhex/Widgets/appButtons.dart';
 import 'package:univhex/Widgets/appTextFields.dart';
 
 class AppLoginForm extends StatefulWidget {
@@ -30,7 +30,7 @@ class AppLoginFormState extends State<AppLoginForm> {
       TextEditingController(); // Controller for Password.
   String? _email;
   String? _password = '';
-
+  bool loggingIn = false;
   Future init() async {
     if (widget._email == null) {
       _email = await UserSecureStorage.getEmail() ?? '';
@@ -61,9 +61,13 @@ class AppLoginFormState extends State<AppLoginForm> {
     _loginFormKey.currentState?.save();
     if (_loginFormKey.currentState != null &&
         _loginFormKey.currentState!.validate()) {
+      setState(() {
+        loggingIn = true;
+        debugPrint(loggingIn.toString());
+      });
       if (await authUser(_email, _password)) {
         debugPrint("User Authenticated");
-        AppUser? user = await readUserfromDB(_emailController.text);
+        AppUser? user = await readUserfromDB(CurrentUser.firebaseUser!.uid);
         if (user != null && await UserSecureStorage.setUser(user)) {
           debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:" +
               user.toString());
@@ -75,6 +79,9 @@ class AppLoginFormState extends State<AppLoginForm> {
         }
       }
     }
+    setState(() {
+      loggingIn = false;
+    });
   }
 
   @override
@@ -110,7 +117,27 @@ class AppLoginFormState extends State<AppLoginForm> {
             controller: _passwordController,
           ),
           CurrentUser.addVerticalSpace(2),
-          EntryButton(text: "Sign In", function: _submitLoginForm),
+
+          !loggingIn
+              ? ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size.fromHeight(40),
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onPrimaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  onPressed: () {
+                    _submitLoginForm();
+                  },
+                  child: Text("Sign In"),
+                )
+              : CircularProgressIndicator(
+                  backgroundColor: AppColors.myLightBlue,
+                ),
         ],
       ),
     );

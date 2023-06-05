@@ -28,7 +28,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       future: _authorFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Container();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -50,9 +50,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                         fit: BoxFit.fitWidth,
                       ),
                       onPressed: () {
+                        CurrentUser.inPost = false;
                         if (author!.email != CurrentUser.user!.email) {
-                          context.router
-                              .push(ProfilePageRoute(currentUser: author));
+                          context.router.push(ProfilePageRoute(user: author));
                         } else {
                           debugPrint("Same Person");
                         }

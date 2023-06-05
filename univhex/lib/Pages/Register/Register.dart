@@ -16,10 +16,10 @@ class Register extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0.01, 0.3],
+          stops: [0.01, 0.24],
           colors: [
             AppColors.myPurple,
-            AppColors.myBlack,
+            AppColors.bgColor,
           ],
         ),
       ),

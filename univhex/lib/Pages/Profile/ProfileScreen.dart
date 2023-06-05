@@ -1,15 +1,53 @@
+import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/cloud_storage.dart';
+import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Objects/app_user.dart';
+import 'package:univhex/Objects/post_interaction_bar.dart';
+import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Objects/univhex_post_widget.dart';
 import 'package:univhex/Router/app_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 @RoutePage(name: 'ProfilePageRoute')
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key, required this.currentUser});
-  final AppUser? currentUser; // Current user is required.
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key, required this.user});
+  final AppUser? user;
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool _isUploading = false;
+
+  Future<void> selectProfilePicture() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    debugPrint(pickedFile.toString());
+    if (pickedFile != null) {
+      // Use the picked image file for further processing (e.g., upload to Firebase Storage)
+      setState(() {
+        _isUploading = true;
+      });
+
+      final imageFile = File(pickedFile.path);
+
+      // Call the uploadProfilePicture function to upload the selected image to Firebase Storage
+      final String imgURL =
+          await uploadProfilePicture(widget.user!.id!, imageFile.path);
+
+      setState(() {
+        saveProfilePictureUrl(widget.user!.id!, imgURL);
+        _isUploading = false;
+      });
+    } else {
+      // Handle when the user cancels the image selection
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +55,13 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 40,
         title: Text(
-          currentUser!.email!,
+          widget.user!.email!,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {
-              /* TODO 
-          Navigate to settings page, where user can change some required settings.
-          */
               context.router.push(const SettingsRoute());
             },
             icon: const Icon(Icons.settings),
@@ -41,28 +76,41 @@ class ProfilePage extends StatelessWidget {
             width: CurrentUser.deviceWidth,
             child: Column(
               children: [
-                HexagonWidget.flat(
-                  width: CurrentUser.deviceWidth! * 0.4,
-                  color: AppColors.myPurple,
-                  child: AspectRatio(
-                    aspectRatio: HexagonType.FLAT.ratio,
-                    child: HexagonWidget.flat(
-                      width: MediaQuery.of(context).size.width * 0.35,
-                      child: AspectRatio(
-                        aspectRatio: HexagonType.FLAT.ratio,
-                        child: Center(
-                          child: Image.asset(
-                            'assets/images/anonymous.png',
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
-                      ),
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    selectProfilePicture();
+                  },
+                  child: HexagonWidget.flat(
+                    width: CurrentUser.deviceWidth! * 0.4,
+                    color: AppColors.myPurple,
+                    child: !_isUploading
+                        ? AspectRatio(
+                            aspectRatio: HexagonType.FLAT.ratio,
+                            child: HexagonWidget.flat(
+                              width: MediaQuery.of(context).size.width * 0.35,
+                              child: AspectRatio(
+                                aspectRatio: HexagonType.FLAT.ratio,
+                                child: widget.user!.imgUrl ==
+                                        'assets/images/icon.png'
+                                    ? Image.asset(
+                                        'assets/images/icon.png',
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        CurrentUser.user!.imgUrl!,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                          )
+                        : CircularProgressIndicator(
+                            backgroundColor: AppColors.myPurple,
+                            color: AppColors.myBlue),
                   ),
                 ),
                 CurrentUser.addVerticalSpace(1),
                 Text(
-                  "${currentUser!.name} ${currentUser!.surname}",
+                  "${widget.user!.name} ${widget.user!.surname}",
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ],
@@ -73,8 +121,8 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                currentUser!.hexPoints.toString(),
-                style: Theme.of(context).textTheme.headline3,
+                widget.user!.hexPoints.toString(),
+                style: Theme.of(context).textTheme.displaySmall,
               ),
               CurrentUser.addHorizontalSpace(2),
               SizedBox(
@@ -84,7 +132,7 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
           CurrentUser.addVerticalSpace(1.2),
-          const ProfileTabBar()
+          ProfileTabBar(userId: widget.user!.id!)
         ],
       ),
     );
@@ -92,8 +140,8 @@ class ProfilePage extends StatelessWidget {
 }
 
 class ProfileTabBar extends StatefulWidget {
-  const ProfileTabBar({super.key});
-
+  const ProfileTabBar({super.key, required this.userId});
+  final String userId;
   @override
   State<ProfileTabBar> createState() => _ProfileTabBarState();
 }
@@ -104,11 +152,11 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
     return DefaultTabController(
       length: 2,
       child: Container(
-        color: AppColors.myBlack,
         height: CurrentUser.deviceHeight! * 0.46,
-        child: const Column(
+        child: Column(
           children: [
             TabBar(
+              indicatorColor: AppColors.myAqua,
               tabs: [
                 Tab(icon: Icon(Icons.post_add_outlined)),
                 Tab(icon: Icon(Icons.question_mark)),
@@ -117,8 +165,8 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
             Expanded(
               child: TabBarView(
                 children: [
-                  UserPostList(),
-                  UserInformation(),
+                  UserPostList(userId: widget.userId),
+                  const UserInformation(),
                 ],
               ),
             ),
@@ -167,27 +215,58 @@ class UserInformation extends StatelessWidget {
   }
 }
 
-class UserPostList extends StatelessWidget {
+// ignore: must_be_immutable
+class UserPostList extends StatefulWidget {
   const UserPostList({
     Key? key,
+    required this.userId,
   }) : super(key: key);
 
+  final String userId;
+
+  @override
+  State<UserPostList> createState() => _UserPostListState();
+}
+
+class _UserPostListState extends State<UserPostList> {
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      // Create a grid with 3 columns. If you change the scrollDirection to
-      // horizontal, this produces 3 rows.
-      crossAxisCount: 3,
-      // Generate 100 widgets that display their index in the List.
-      children: List.generate(10, (index) {
-        return Center(
-          child: Text(
-            // This should be a minimal postview.
-            'POST $index',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        );
-      }),
+    return FutureBuilder(
+      future: fetchUserPosts(widget.userId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text("Error Occurred ${snapshot.error}"));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          List<UnivhexPost> dataList = snapshot.data ?? [];
+
+          // UnivhexPost currentPost = dataList[index];
+          return dataList.isNotEmpty
+              ? ListView.builder(
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index) {
+                    UnivhexPost currentPost = dataList[index];
+                    return Column(
+                      children: [
+                        UnivhexPostWidget(
+                          post: currentPost,
+                          height: 0,
+                        ),
+                        PostInteractionBar(post: currentPost),
+                        const Divider(
+                          height: 0,
+                          color: AppColors.obsidianInvert,
+                          thickness: 0.5,
+                        ),
+                      ],
+                    );
+                  },
+                )
+              : Container();
+        }
+      },
     );
   }
 }

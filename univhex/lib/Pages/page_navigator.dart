@@ -17,7 +17,7 @@ class UserPage extends HookWidget {
       routes: [
         const HomePageRoute(),
         const DiscoverPageRoute(),
-        ProfilePageRoute(currentUser: CurrentUser.user),
+        ProfilePageRoute(user: CurrentUser.user),
       ],
       builder: (context, child) {
         final tabsRouter = context.tabsRouter;

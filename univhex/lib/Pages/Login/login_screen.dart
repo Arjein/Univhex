@@ -18,41 +18,31 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              children: [
-                CurrentUser.addVerticalSpace(3),
-                SizedBox(
-                  width: 280, // To set width of our Logo. Might be modified...
-                  child: Image.asset("assets/images/icon.png"),
-                ),
-                Text("UNIVHEX",
-                    style: Theme.of(context).textTheme.displayMedium),
-                CurrentUser.addVerticalSpace(2.5),
-                AppLoginForm(), // The form widget called here.
-                Row(
-                  // Dont have An account? Sign Up!
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Don't have an account?"),
-                    TextButton(
-                      onPressed: () {
-                        context.router.push(const RegisterPageRoute());
-                      },
-                      child: const Text("Sign-Up"),
-                    ),
-                  ],
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.router.push(const AppRoute());
-                  },
-                  child: const Text("Test Access"),
-                ),
-              ],
-            ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 280, // To set width of our Logo. Might be modified...
+                child: Image.asset("assets/images/icon.png"),
+              ),
+              Text("UNIVHEX", style: Theme.of(context).textTheme.displayMedium),
+              CurrentUser.addVerticalSpace(2.5),
+              AppLoginForm(), // The form widget called here.
+              Row(
+                // Dont have An account? Sign Up!
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Don't have an account?"),
+                  TextButton(
+                    onPressed: () {
+                      context.router.push(const RegisterPageRoute());
+                    },
+                    child: const Text("Sign-Up"),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

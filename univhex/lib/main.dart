@@ -4,19 +4,19 @@ import 'package:univhex/Firebase/user_auth.dart';
 
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
-import 'package:univhex/Pages/Login/login_screen.dart';
 import 'package:univhex/Router/app_router.dart';
 import 'package:univhex/Router/router_observer.dart';
 import 'package:univhex/Router/router_singleton.dart';
 import 'package:univhex/Theme/theme_constants.dart';
-
-import 'Constants/Constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+/* TODO
+  - HomePage buildlerken resim değişmiyo. listviewin rebuilt etmesi gerekiyor. farklı fotoğraf yükleyip post atarsak problemi anlarız.
+  - Detail'den homea dönerken setState cakmiyor like butonu Sıkıntı.
+  - AddPost widgetında klavye problemi va. Gitmiyor klavye.
+  - Yorum butonu direk keyboardı accak
 
-// Kullanıcı giriş veya kayıt yaptıgında otomatik giriş yapıcaz --> flutter_secure_storage
-// Yorum butonnu direk keyboardı accak
-//
+*/
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +25,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   AppUser? user;
+  //await UserSecureStorage.deleteStorage();
   String? email = await UserSecureStorage.getEmail();
   String? password = await UserSecureStorage.getPassword();
   bool isLogged = await authUser(email, password);
