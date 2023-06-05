@@ -9,6 +9,7 @@ ThemeData darkTheme = ThemeData(
 
   // fontFamily: GoogleFonts.comfortaa().fontFamily,
   backgroundColor: AppColors.bgColor,
+
   scaffoldBackgroundColor: AppColors.bgColor,
   appBarTheme:
       const AppBarTheme(backgroundColor: Colors.transparent, elevation: 0),

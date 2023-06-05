@@ -102,6 +102,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const AppRouterPage(),
       );
     },
+    UnivhexPageRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const UnivhexPage(),
+      );
+    },
   };
 }
 
@@ -371,6 +377,20 @@ class AppRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'AppRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [UnivhexPage]
+class UnivhexPageRoute extends PageRouteInfo<void> {
+  const UnivhexPageRoute({List<PageRouteInfo>? children})
+      : super(
+          UnivhexPageRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UnivhexPageRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

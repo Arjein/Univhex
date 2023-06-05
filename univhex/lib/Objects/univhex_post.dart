@@ -12,6 +12,7 @@ class UnivhexPost {
   final bool isAnonymous;
   final DateTime dateTime;
   final List<dynamic> hexedBy;
+  int hexCount;
   final List<dynamic> comments;
   final String university;
 
@@ -22,12 +23,13 @@ class UnivhexPost {
     required this.isAnonymous,
     required this.dateTime,
     required this.hexedBy,
+    required this.hexCount,
     required this.comments,
     required this.university,
   });
 
   Future<AppUser> retrieveAuthor() async {
-    AppUser? retrievedUser = await readUserfromDB(authorId!);
+    AppUser? retrievedUser = await readUserfromDB(authorId);
     return retrievedUser!;
   }
 
@@ -45,13 +47,8 @@ class UnivhexPost {
       isAnonymous: jsonData["isAnonymous"],
       dateTime: jsonData["Datetime"].toDate(),
       hexedBy: jsonData["HexedBy"],
+      hexCount: jsonData["HexCount"],
       comments: jsonData["Comments"],
-      /*
-      comments: (jsonData["CommentBy"] as Map<String, dynamic>).map(
-        (key, value) => MapEntry(
-            AppUser.fromJson(key as Map<String, dynamic>), value.toString()),
-      ),
-      */
     );
 
     return fetchedPost;
@@ -68,8 +65,8 @@ class UnivhexPost {
     } else {
       hexedBy.add(CurrentUser.user!.id);
     }
-
-    postRef.update({'HexedBy': hexedBy});
+    hexCount = hexedBy.length;
+    postRef.update({'HexedBy': hexedBy, 'HexCount': hexCount});
   }
 
 // ADDs comment to a post
@@ -90,6 +87,7 @@ class UnivhexPost {
       "isAnonymous": isAnonymous,
       "Datetime": dateTime,
       "HexedBy": hexedBy,
+      "HexCount": hexCount,
       "Comments": comments,
     };
   }

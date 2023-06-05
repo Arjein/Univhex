@@ -111,7 +111,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 CurrentUser.addVerticalSpace(1),
                 Text(
                   "${widget.user!.name} ${widget.user!.surname}",
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(color: AppColors.obsidianInvert),
                 ),
               ],
             ),
@@ -188,25 +191,39 @@ class UserInformation extends StatelessWidget {
     Map<int, String> _gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
     int grade = int.parse(CurrentUser.user!.yearOfStudy!);
     String year = _gradeMap[grade]!;
-    String name = CurrentUser.user!.name![0].toUpperCase() +
-        CurrentUser.user!.name!.substring(1);
-    String surname = CurrentUser.user!.surname![0].toUpperCase() +
-        CurrentUser.user!.surname!.substring(1);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(child: Text(CurrentUser.user!.university!)),
           CurrentUser.addVerticalSpace(2),
-          Text("$name $surname"),
+          Center(
+              child: Text(
+            CurrentUser.user!.university!,
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall!
+                .copyWith(color: AppColors.obsidianInvert),
+          )),
+          CurrentUser.addVerticalSpace(2),
           CurrentUser.addVerticalSpace(2),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(CurrentUser.user!.fieldOfStudy!),
-              Text("${CurrentUser.user!.yearOfStudy!}$year Grade"),
+              Text(
+                CurrentUser.user!.fieldOfStudy!,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(color: AppColors.obsidianInvert),
+              ),
+              Text(
+                "${CurrentUser.user!.yearOfStudy!}$year Grade",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: AppColors.obsidianInvert,
+                    ),
+              ),
             ],
           ),
         ],
@@ -231,42 +248,49 @@ class UserPostList extends StatefulWidget {
 class _UserPostListState extends State<UserPostList> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: fetchUserPosts(widget.userId),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text("Error Occurred ${snapshot.error}"));
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else {
-          List<UnivhexPost> dataList = snapshot.data ?? [];
-
-          // UnivhexPost currentPost = dataList[index];
-          return dataList.isNotEmpty
-              ? ListView.builder(
-                  itemCount: dataList.length,
-                  itemBuilder: (context, index) {
-                    UnivhexPost currentPost = dataList[index];
-                    return Column(
-                      children: [
-                        UnivhexPostWidget(
-                          post: currentPost,
-                          height: 0,
-                        ),
-                        PostInteractionBar(post: currentPost),
-                        const Divider(
-                          height: 0,
-                          color: AppColors.obsidianInvert,
-                          thickness: 0.5,
-                        ),
-                      ],
-                    );
-                  },
-                )
-              : Container();
-        }
+    return RefreshIndicator(
+      onRefresh: () {
+        // Bunlar düzgün değil
+        setState(() {});
+        return Future.delayed(Duration(seconds: 1));
       },
+      child: FutureBuilder(
+        future: fetchUserPosts(widget.userId),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("Error Occurred ${snapshot.error}"));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else {
+            List<UnivhexPost> dataList = snapshot.data ?? [];
+
+            // UnivhexPost currentPost = dataList[index];
+            return dataList.isNotEmpty
+                ? ListView.builder(
+                    itemCount: dataList.length,
+                    itemBuilder: (context, index) {
+                      UnivhexPost currentPost = dataList[index];
+                      return Column(
+                        children: [
+                          UnivhexPostWidget(
+                            post: currentPost,
+                            height: 0,
+                          ),
+                          PostInteractionBar(post: currentPost),
+                          const Divider(
+                            height: 0,
+                            color: AppColors.obsidianInvert,
+                            thickness: 0.5,
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                : Container();
+          }
+        },
+      ),
     );
   }
 }

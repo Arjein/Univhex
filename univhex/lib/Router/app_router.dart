@@ -7,6 +7,7 @@ import 'package:univhex/Pages/Discover/discover_page.dart';
 import 'package:univhex/Pages/Register/Register.dart';
 import 'package:univhex/Pages/Register/RegisterContinue.dart';
 import 'package:univhex/Pages/Settings/settings.dart';
+import 'package:univhex/Pages/Univhex/univhex_screen.dart';
 import 'package:univhex/Pages/page_navigator.dart';
 
 import '../Pages/Home/home_screen.dart';
@@ -69,6 +70,10 @@ class AppRouter extends _$AppRouter {
                 AutoRoute(
                   path: "discover",
                   page: DiscoverPageRoute.page,
+                ),
+                AutoRoute(
+                  path: "univhex",
+                  page: UnivhexPageRoute.page,
                 ),
               ],
             ),

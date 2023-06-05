@@ -25,7 +25,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   AppUser? user;
-  //await UserSecureStorage.deleteStorage();
+  // await UserSecureStorage.deleteStorage();
   String? email = await UserSecureStorage.getEmail();
   String? password = await UserSecureStorage.getPassword();
   bool isLogged = await authUser(email, password);

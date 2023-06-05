@@ -46,6 +46,7 @@ dependencies:
   auto_size_text_field: ^2.2.1
   image_picker: ^0.8.7+5
   firebase_storage: ^11.2.2
+  intl: ^0.18.1
 
 dev_dependencies:
   auto_route_generator: ^7.1.1

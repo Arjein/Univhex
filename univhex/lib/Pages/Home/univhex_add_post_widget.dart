@@ -185,6 +185,7 @@ class _PostButtonState extends State<PostButton> {
       isAnonymous: isAnonymous,
       dateTime: dateTime,
       hexedBy: [],
+      hexCount: 0,
       comments: [],
     );
 

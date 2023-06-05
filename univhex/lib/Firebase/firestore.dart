@@ -37,6 +37,7 @@ Future<bool> addNewPostDB(UnivhexPost newPost) async {
       isAnonymous: newPost.isAnonymous,
       dateTime: newPost.dateTime,
       hexedBy: newPost.hexedBy,
+      hexCount: newPost.hexCount,
       comments: newPost.comments,
     );
 
@@ -54,7 +55,11 @@ Future<List<UnivhexPost>> fetchUserPosts(String userId) async {
   try {
     final snapshot = await FirebaseFirestore.instance
         .collection('Posts')
-        .where('AuthorId', isEqualTo: userId) // error generated here
+        .where(
+          'AuthorId',
+          isEqualTo: userId,
+        )
+        .where('isAnonymous', isEqualTo: false)
         .withConverter(
           fromFirestore: UnivhexPost.fromFirestore,
           toFirestore: (UnivhexPost post, _) => post.toFirestore(),
@@ -71,7 +76,7 @@ Future<List<UnivhexPost>> fetchUserPosts(String userId) async {
   }
 }
 
-Future<AppUser?> readUserfromDB(String userId) async {
+Future<AppUser?> readUserfromDB(String? userId) async {
   try {
     debugPrint("Burdamı patliyor acaba?");
     final ref = FirebaseFirestore.instance
@@ -133,6 +138,29 @@ Future<List<UnivhexPost>> fetchFeed(String universityName) async {
           toFirestore: (UnivhexPost post, _) => post.toFirestore(),
         )
         .orderBy('Datetime', descending: true)
+        .get();
+    final dataList = snapshot.docs.map((doc) => doc.data()).toList();
+    final univhexPosts = dataList.map((data) => data).toList();
+
+    return univhexPosts;
+  } catch (e) {
+    debugPrint(e.toString());
+    return [];
+  }
+}
+
+Future<List<UnivhexPost>> fetchUnivhexes(String universityName) async {
+  try {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Posts')
+        .where('University', isEqualTo: universityName) // error generated here
+        .where('isAnonymous', isEqualTo: false)
+        .withConverter(
+          fromFirestore: UnivhexPost.fromFirestore,
+          toFirestore: (UnivhexPost post, _) => post.toFirestore(),
+        )
+        .orderBy('HexCount', descending: true)
+        .limit(3)
         .get();
     final dataList = snapshot.docs.map((doc) => doc.data()).toList();
     final univhexPosts = dataList.map((data) => data).toList();

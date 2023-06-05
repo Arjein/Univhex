@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
@@ -95,7 +96,6 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                         }
                       },
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
@@ -114,9 +114,20 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                           CurrentUser.addHorizontalSpace(2),
                           Text(
                             !widget.post.isAnonymous
-                                ? "${author!.name} ${author!.surname}"
+                                ? "${author.name} ${author.surname}"
                                 : "Anonymous",
                             style: const TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                DateFormat('HH:mm . d, MMMM')
+                                    .format(widget.post.dateTime),
+                                style:
+                                    TextStyle(color: AppColors.obsidianInvert),
+                              ),
+                            ),
                           ),
                         ],
                       ),

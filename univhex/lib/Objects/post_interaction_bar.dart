@@ -49,7 +49,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     children: [
                       CurrentUser.addVerticalSpace(1.8),
                       Text(
-                        widget.post.hexedBy.length.toString(),
+                        widget.post.hexCount.toString(),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),

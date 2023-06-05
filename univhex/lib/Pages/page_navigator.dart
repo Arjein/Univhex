@@ -16,6 +16,7 @@ class UserPage extends HookWidget {
     return AutoTabsRouter(
       routes: [
         const HomePageRoute(),
+        const UnivhexPageRoute(),
         const DiscoverPageRoute(),
         ProfilePageRoute(user: CurrentUser.user),
       ],
@@ -47,6 +48,10 @@ class UserPage extends HookWidget {
                       tabsRouter.setActiveIndex(2);
                       currentPage.value = 2;
                       break;
+                    case 3:
+                      tabsRouter.setActiveIndex(3);
+                      currentPage.value = 3;
+                      break;
                     default:
                   }
                 },
@@ -55,6 +60,11 @@ class UserPage extends HookWidget {
                     icon: Icon(FluentIcons.home_32_regular),
                     selectedIcon: Icon(FluentIcons.home_32_filled),
                     label: 'Home',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.hexagon_outlined),
+                    selectedIcon: Icon(Icons.hexagon_rounded),
+                    label: 'Univhex',
                   ),
                   NavigationDestination(
                     icon: Icon(FluentIcons.compass_northwest_28_regular),
