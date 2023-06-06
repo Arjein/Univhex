@@ -173,7 +173,7 @@ class _registerContinueFormState extends State<registerContinueForm> {
                       AppUser newUser = AppUser(
                         id: "",
                         email: widget.email.trim(),
-                        name: widget.name..trim().toLowerCase(),
+                        name: widget.name.trim().toLowerCase(),
                         surname: widget.surname.trim().toLowerCase(),
                         password: widget.password,
                         university: university!.toLowerCase(),

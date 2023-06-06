@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:univhex/Constants/current_user.dart';
@@ -24,6 +25,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   AppUser? user;
   // await UserSecureStorage.deleteStorage();
   String? email = await UserSecureStorage.getEmail();

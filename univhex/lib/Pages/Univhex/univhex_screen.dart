@@ -47,6 +47,8 @@ class _UnivhexPageState extends State<UnivhexPage> {
         title: const Text("UNIVHEX"),
       ),
       body: RefreshIndicator(
+        color: AppColors.myLightBlue,
+        backgroundColor: AppColors.bgColor,
         onRefresh: _onRefresh,
         child: FutureBuilder(
           future: _createUnivhexListData(),

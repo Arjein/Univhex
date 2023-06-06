@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<List<UnivhexPost>> _feedFuture;
+  final FocusNode _focusNode = FocusNode();
 
   Future<void> _refreshFeed() async {
     _feedFuture = fetchFeed(CurrentUser.user!.university!);
@@ -34,6 +35,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,8 +51,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(CurrentUser.user!.university!.toUpperCase()),
       ),
       body: RefreshIndicator(
-        color: AppColors.myAqua,
-        backgroundColor: AppColors.myPurple,
+        color: AppColors.myLightBlue,
+        backgroundColor: AppColors.bgColor,
         displacement: 0,
         onRefresh: _refreshFeed,
         child: FutureBuilder<List<UnivhexPost>>(
@@ -55,48 +62,64 @@ class _HomePageState extends State<HomePage> {
               return Center(child: Text("Error Occurred ${snapshot.error}"));
             } else {
               List<UnivhexPost> dataList = snapshot.data ?? [];
-              return CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: UnivhexAddPostWidget(onPressed: _refreshFeed),
-                  ),
-                  // Show the posts if there are any, or an empty widget
-
-                  if (dataList.isNotEmpty)
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        addRepaintBoundaries: false,
-                        (context, index) {
-                          UnivhexPost currentPost = dataList[index];
-
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                onDoubleTap: () {
-                                  setState(() {
-                                    if (!currentPost.hexedBy
-                                        .contains(CurrentUser.user!.id)) {
-                                      currentPost.addLike();
-                                    }
-                                  });
-                                },
-                                child: UnivhexPostWidget(
-                                  post: currentPost,
-                                ),
-                              ),
-                              PostInteractionBar(post: currentPost),
-                              const Divider(
-                                height: 0,
-                                color: AppColors.obsidianInvert,
-                                thickness: 0.5,
-                              ),
-                            ],
-                          );
-                        },
-                        childCount: dataList.length,
+              return GestureDetector(
+                onTap: () {
+                  if (_focusNode.hasFocus) {
+                    _focusNode.unfocus();
+                  }
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: UnivhexAddPostWidget(
+                        onPressed: _refreshFeed,
+                        focusNode: _focusNode,
                       ),
                     ),
-                ],
+                    // Show the posts if there are any, or an empty widget
+
+                    if (dataList.isNotEmpty)
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          addRepaintBoundaries: false,
+                          (context, index) {
+                            UnivhexPost currentPost = dataList[index];
+
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (_focusNode.hasFocus) {
+                                      _focusNode.unfocus();
+                                    }
+                                  },
+                                  onDoubleTap: () {
+                                    setState(() {
+                                      if (!currentPost.hexedBy
+                                          .contains(CurrentUser.user!.id)) {
+                                        currentPost.addLike();
+                                      }
+                                    });
+                                  },
+                                  child: UnivhexPostWidget(
+                                    post: currentPost,
+                                    userid: CurrentUser.user!.id!,
+                                  ),
+                                ),
+                                PostInteractionBar(post: currentPost),
+                                const Divider(
+                                  height: 0,
+                                  color: AppColors.obsidianInvert,
+                                  thickness: 0.5,
+                                ),
+                              ],
+                            );
+                          },
+                          childCount: dataList.length,
+                        ),
+                      ),
+                  ],
+                ),
               );
             }
           },

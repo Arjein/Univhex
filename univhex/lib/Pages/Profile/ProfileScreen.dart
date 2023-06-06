@@ -78,6 +78,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: RefreshIndicator(
+        color: AppColors.myLightBlue,
+        backgroundColor: AppColors.bgColor,
         onRefresh: () {
           return _reloadProfile();
         },
@@ -327,7 +329,8 @@ class _UserPostListState extends State<UserPostList> {
                     UnivhexPost currentPost = dataList[index];
                     return Column(
                       children: [
-                        UnivhexPostWidget(post: currentPost),
+                        UnivhexPostWidget(
+                            post: currentPost, userid: widget.userId),
                         PostInteractionBar(post: currentPost),
                         const Divider(
                           height: 0,

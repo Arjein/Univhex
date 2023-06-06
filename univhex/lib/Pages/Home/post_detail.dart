@@ -61,6 +61,7 @@ class _PostDetailState extends State<PostDetail> {
               },
               child: UnivhexPostWidget(
                 post: widget.post,
+                userid: CurrentUser.user!.id!,
               ),
             ),
             const Divider(

@@ -12,8 +12,10 @@ class UnivhexPostWidget extends StatefulWidget {
   const UnivhexPostWidget({
     super.key,
     required this.post,
+    this.userid,
   });
   final UnivhexPost post;
+  final String? userid;
 
   @override
   State<UnivhexPostWidget> createState() => _UnivhexPostWidgetState();
@@ -64,9 +66,11 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
               return const Text('Author not found');
             }
             _loadAvatarImage(author);
+
             return GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onTap: () {
-                if (CurrentUser.inPost == null || CurrentUser.inPost == false) {
+                if (CurrentUser.inPost == false) {
                   CurrentUser.inPost = true;
 
                   context.router.push(
@@ -86,7 +90,8 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (author.id != CurrentUser.user!.id) {
+                        if (author.id != widget.userid &&
+                            author.id != CurrentUser.user!.id!) {
                           context.router.push(ProfilePageRoute(user: author));
                         }
                       },

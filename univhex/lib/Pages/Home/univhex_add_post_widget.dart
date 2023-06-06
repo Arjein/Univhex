@@ -16,10 +16,11 @@ class UnivhexAddPostWidget extends HookWidget {
   UnivhexAddPostWidget({
     Key? key,
     required this.onPressed,
+    required this.focusNode,
   }) : super(key: key);
 
   final VoidCallback onPressed;
-
+  final FocusNode focusNode;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -29,6 +30,7 @@ class UnivhexAddPostWidget extends HookWidget {
     final pickedImage = useState<XFile?>(null);
     final imageUrl = useState<String?>(null);
     final isUploading = useState<bool>(false);
+
     return Column(
       children: [
         const Divider(
@@ -175,6 +177,8 @@ class UnivhexAddPostWidget extends HookWidget {
         children: [
           TextField(
             controller: textController,
+            focusNode: focusNode,
+            keyboardType: TextInputType.name,
             minLines: 1,
             maxLines: 4,
             decoration: const InputDecoration(
