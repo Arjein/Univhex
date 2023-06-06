@@ -11,6 +11,7 @@ import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/post_interaction_bar.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
+import 'package:univhex/Pages/Profile/hex_avatar.dart';
 import 'package:univhex/Router/app_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -30,29 +31,32 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {});
   }
 
-  Future<void> selectProfilePicture() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    debugPrint(pickedFile.toString());
-    if (pickedFile != null) {
-      // Use the picked image file for further processing (e.g., upload to Firebase Storage)
-      setState(() {
-        _isUploading = true;
-      });
-
-      final imageFile = File(pickedFile.path);
-
-      // Call the uploadProfilePicture function to upload the selected image to Firebase Storage
-      final String imgURL =
-          await uploadProfilePicture(widget.user!.id!, imageFile.path);
-
-      setState(() {
-        saveProfilePictureUrl(widget.user!.id!, imgURL);
-        _isUploading = false;
-      });
-    } else {
-      // Handle when the user cancels the image selection
+  Future<void> selectProfilePicture(bool delete) async {
+    late String imgURL;
+    if (delete) {
+      imgURL = "assets/images/icon.png";
     }
+
+    if (!delete) {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        // Use the picked image file for further processing (e.g., upload to Firebase Storage)
+        setState(() {
+          _isUploading = true;
+        });
+
+        final imageFile = File(pickedFile.path);
+
+        // Call the uploadProfilePicture function to upload the selected image to Firebase Storage
+        imgURL = await uploadProfilePicture(widget.user!.id!, imageFile.path);
+      }
+    }
+    setState(() {
+      saveProfilePictureUrl(widget.user!.id!, imgURL);
+      _isUploading = false;
+    });
   }
 
   @override
@@ -91,37 +95,74 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              selectProfilePicture();
-                            },
-                            child: HexagonWidget.flat(
-                              width: CurrentUser.deviceWidth! * 0.4,
-                              color: AppColors.myPurple,
-                              child: !_isUploading
-                                  ? AspectRatio(
-                                      aspectRatio: HexagonType.FLAT.ratio,
-                                      child: HexagonWidget.flat(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.35,
-                                        child: AspectRatio(
-                                          aspectRatio: HexagonType.FLAT.ratio,
-                                          child: widget.user!.imgUrl ==
-                                                  'assets/images/icon.png'
-                                              ? Image.asset(
-                                                  'assets/images/icon.png',
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Image.network(
-                                                  CurrentUser.user!.imgUrl!,
-                                                  fit: BoxFit.cover,
+                            onTap: CurrentUser.user!.id! == widget.user!.id!
+                                ? () {
+                                    showModalBottomSheet<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                                color: AppColors.bgColor),
+                                            height:
+                                                CurrentUser.deviceHeight! * 0.3,
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Expanded(
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          foregroundColor:
+                                                              AppColors
+                                                                  .obsidianInvert,
+                                                          backgroundColor:
+                                                              AppColors.myBlack,
+                                                        ),
+                                                        onPressed: () {
+                                                          selectProfilePicture(
+                                                              false);
+                                                        },
+                                                        child: const Text(
+                                                            'Choose a Picture'),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                        ),
-                                      ),
-                                    )
-                                  : CircularProgressIndicator(
-                                      backgroundColor: AppColors.myPurple,
-                                      color: AppColors.myBlue),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          foregroundColor:
+                                                              Colors.red,
+                                                          backgroundColor:
+                                                              AppColors.myBlack,
+                                                        ),
+                                                        onPressed: () {
+                                                          selectProfilePicture(
+                                                              true);
+                                                        },
+                                                        child: const Text(
+                                                            'Delete Profile Picture'),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        });
+                                  }
+                                : () {},
+                            child: HexAvatar(
+                              isUploading: _isUploading,
+                              imgUrl: widget.user!.imgUrl!,
+                              width: CurrentUser.deviceWidth! * 0.4,
                             ),
                           ),
                           CurrentUser.addVerticalSpace(1),

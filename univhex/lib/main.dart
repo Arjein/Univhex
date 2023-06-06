@@ -31,14 +31,16 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   AppUser? user;
-  // await UserSecureStorage.deleteStorage();
+  //await UserSecureStorage.deleteStorage();
   String? email = await UserSecureStorage.getEmail();
   String? password = await UserSecureStorage.getPassword();
   bool isLogged = await authUser(email, password);
   debugPrint("Is Logged: $isLogged");
 
   if (isLogged) {
-    user = await readUserfromDB(await UserSecureStorage.getFirebaseUID());
+    String? userid = await UserSecureStorage.getFirebaseUID();
+    debugPrint(userid);
+    user = await readUserfromDB(userid);
     CurrentUser.user = user;
     debugPrint("Fetched user:" + user.toString());
     runApp(

@@ -224,6 +224,7 @@ class _PostTextAreaState extends State<PostTextArea> {
           child: TextField(
             minLines: 6,
             maxLines: null,
+            autocorrect: false,
             decoration: const InputDecoration(
                 border: InputBorder.none, hintText: "What is happening?!"),
             keyboardType: TextInputType.name,

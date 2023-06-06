@@ -50,7 +50,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ),
                       onTap: () {
                         CurrentUser.inPost = false;
-                        if (author!.email != CurrentUser.user!.email) {
+                        if (author!.id != CurrentUser.user!.id) {
                           context.router.push(ProfilePageRoute(user: author));
                         } else {
                           debugPrint("Same Person");

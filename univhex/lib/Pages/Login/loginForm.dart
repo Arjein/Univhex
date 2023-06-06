@@ -65,10 +65,10 @@ class AppLoginFormState extends State<AppLoginForm> {
         loggingIn = true;
         debugPrint(loggingIn.toString());
       });
-      if (await authUser(_email, _password)) {
+      if (await authUser(_email, _password!)) {
         debugPrint("User Authenticated");
         AppUser? user = await readUserfromDB(CurrentUser.firebaseUser!.uid);
-        if (user != null && await UserSecureStorage.setUser(user)) {
+        if (user != null) {
           debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:" +
               user.toString());
           CurrentUser.user = user;

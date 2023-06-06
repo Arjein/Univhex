@@ -8,6 +8,7 @@ import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Pages/Profile/hex_avatar.dart';
 import 'package:univhex/Router/app_router.dart';
 
 class UnivhexWidget extends StatefulWidget {
@@ -42,9 +43,15 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
 
   void _loadAvatarImage(AppUser? author) {
     if (author!.imgUrl == "assets/images/icon.png") {
-      _avatarImageProvider = Image.asset("assets/images/icon.png",fit: BoxFit.cover,);
+      _avatarImageProvider = Image.asset(
+        "assets/images/icon.png",
+        fit: BoxFit.cover,
+      );
     } else {
-      _avatarImageProvider = Image.network(author.imgUrl!,fit: BoxFit.cover,);
+      _avatarImageProvider = Image.network(
+        author.imgUrl!,
+        fit: BoxFit.cover,
+      );
     }
   }
 
@@ -71,41 +78,18 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Burası hexli olacak kanks
-                      HexagonWidget.flat(
+                      HexAvatar(
+                        isUploading: false,
+                        imgUrl: author.imgUrl!,
                         width: CurrentUser.deviceWidth! * 0.14,
-                        color: widget.order == -1
+                        borderColor: widget.order == -1
                             ? AppColors.myGold
                             : widget.order == 0
                                 ? AppColors.mySilver
                                 : widget.order == 1
                                     ? AppColors.myBronze
                                     : null,
-                        child: AspectRatio(
-                          aspectRatio: HexagonType.FLAT.ratio,
-                          child: HexagonWidget.flat(
-                            width: CurrentUser.deviceWidth! * 0.11,
-                            child: AspectRatio(
-                                aspectRatio: HexagonType.FLAT.ratio,
-                                child: _avatarImageProvider),
-                          ),
-                        ),
                       ),
-                      /*
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.myLightBlue,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: _avatarImageProvider,
-                        ),
-                      ),
-                      */
                       CurrentUser.addHorizontalSpace(2),
                       Text(
                         "${author.name} ${author.surname}",

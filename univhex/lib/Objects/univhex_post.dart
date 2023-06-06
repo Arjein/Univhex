@@ -93,7 +93,7 @@ class UnivhexPost {
     return {
       "id": id,
       "AuthorId": authorId,
-      "University": university,
+      "University": university.toLowerCase(),
       "TextContent": textContent,
       "isAnonymous": isAnonymous,
       "Datetime": dateTime,

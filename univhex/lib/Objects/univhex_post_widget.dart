@@ -89,7 +89,8 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (author.email != CurrentUser.user!.email) {
+                        if (author.id != CurrentUser.user!.id &&
+                            !widget.post.isAnonymous) {
                           context.router.push(ProfilePageRoute(user: author));
                         } else {
                           debugPrint("Same Person");
