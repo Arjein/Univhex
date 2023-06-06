@@ -156,16 +156,21 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  CurrentUser.addHorizontalSpace(40),
-                  Text(
+                ],
+              ),
+              // Report Button
+
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
                     timePassed != null
                         ? timePassed.toString() + " " + timeType!
                         : timeType!,
                     style: TextStyle(fontSize: 12),
                   ),
-                ],
+                ),
               ),
-              // Report Button
               IconButton(
                 alignment: Alignment.centerRight,
                 icon: const Icon(Icons.more_horiz,
