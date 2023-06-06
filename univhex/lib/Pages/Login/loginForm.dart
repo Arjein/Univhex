@@ -6,8 +6,8 @@ import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Firebase/user_auth.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
-import 'package:univhex/Router/app_router.dart';
-import 'package:univhex/Router/empty_router_pages/app_router_empty.dart';
+
+import 'package:univhex/Router/app_router.gr.dart';
 import 'package:univhex/Widgets/appTextFields.dart';
 
 class AppLoginForm extends StatefulWidget {
@@ -35,7 +35,7 @@ class AppLoginFormState extends State<AppLoginForm> {
     if (widget._email == null) {
       _email = await UserSecureStorage.getEmail() ?? '';
       // _password = await UserSecureStorage.getPassword() ?? '';
-      debugPrint("Init:" + _email!);
+      debugPrint("Init:${_email!}");
     }
     setState(() {
       _emailController.text = _email!;
@@ -69,13 +69,12 @@ class AppLoginFormState extends State<AppLoginForm> {
         debugPrint("User Authenticated");
         AppUser? user = await readUserfromDB(CurrentUser.firebaseUser!.uid);
         if (user != null) {
-          debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:" +
-              user.toString());
+          debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:$user");
           CurrentUser.user = user;
 
           debugPrint(
               "Login Succesfull!\nSubmitted Login Form\nE-mail: $_email, Password: $_password");
-          context.router.push(AppRoute());
+          context.router.push(const AppRoute());
         }
       }
     }
@@ -133,9 +132,9 @@ class AppLoginFormState extends State<AppLoginForm> {
                   onPressed: () {
                     _submitLoginForm();
                   },
-                  child: Text("Sign In"),
+                  child: const Text("Sign In"),
                 )
-              : CircularProgressIndicator(
+              : const CircularProgressIndicator(
                   backgroundColor: AppColors.myLightBlue,
                 ),
         ],

@@ -1,22 +1,25 @@
+import 'dart:math';
+
 import 'package:auto_route/auto_route.dart';
 import "package:flutter/material.dart";
-import 'package:univhex/Constants/Constants.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:lottie/lottie.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Pages/Home/home_screen.dart';
-import 'package:univhex/Pages/Register/Register.dart';
-import 'package:univhex/Pages/page_navigator.dart';
-import 'package:univhex/Router/app_router.dart';
-import 'package:univhex/Router/empty_router_pages/app_router_empty.dart';
+
+import 'package:univhex/Router/app_router.gr.dart';
 import 'loginForm.dart';
 
 @RoutePage(name: "LoginPageRoute")
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends HookWidget {
   LoginScreen({Key? key, this.email}) : super(key: key);
   String? email;
   @override
   Widget build(BuildContext context) {
+    final controller =
+        useAnimationController(duration: const Duration(seconds: 15))
+          ..repeat(reverse: false);
+
     return Scaffold(
-      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -24,7 +27,15 @@ class LoginScreen extends StatelessWidget {
             children: [
               SizedBox(
                 width: 280, // To set width of our Logo. Might be modified...
-                child: Image.asset("assets/images/icon.png"),
+                child: Transform.rotate(
+                  angle: pi /
+                      2, // Rotate 90 degrees. Dart uses radians, not degrees, hence we use pi/2.
+                  child: RotationTransition(
+                    turns: controller,
+                    child: Lottie.network(
+                        'https://assets9.lottiefiles.com/packages/lf20_d6619szt.json'),
+                  ),
+                ),
               ),
               Text("UNIVHEX", style: Theme.of(context).textTheme.displayMedium),
               CurrentUser.addVerticalSpace(2.5),

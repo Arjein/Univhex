@@ -1,12 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Firebase/firestore.dart';
-import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
-import 'package:univhex/Router/app_router.dart';
+
+import 'package:univhex/Router/app_router.gr.dart';
 
 class PostInteractionBar extends StatefulWidget {
   const PostInteractionBar({

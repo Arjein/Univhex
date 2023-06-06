@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:univhex/Constants/AppColors.dart';
-import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Pages/Discover/discover_tile.dart';
 
 @RoutePage(name: 'DiscoverPageRoute')

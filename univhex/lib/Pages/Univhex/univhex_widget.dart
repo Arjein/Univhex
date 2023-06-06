@@ -1,15 +1,10 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hexagon/hexagon.dart';
 import 'package:intl/intl.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Pages/Profile/hex_avatar.dart';
-import 'package:univhex/Router/app_router.dart';
 
 class UnivhexWidget extends StatefulWidget {
   const UnivhexWidget({

@@ -63,31 +63,28 @@ class UnivhexPage extends StatelessWidget {
               Univhex univhex = univhexList[index];
               int i = -1;
               return univhex.univhexes.isNotEmpty
-                  ? Column(
-                      children: [
-                        Text(
-                          univhex.uniName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: AppColors.obsidianInvert),
-                        ),
-                        for (var univhexPost in univhex.univhexes)
-                          Column(
-                            children: [
-                              UnivhexWidget(
-                                post: univhexPost,
-                                order: i,
-                              ),
-                              if (++i <= univhex.univhexes.length)
-                                const Divider(
-                                  thickness: 1.5,
-                                ),
-                            ],
-                          ),
-                      ],
+                  ? Container(
+                      height: 0,
+                      width: 0,
+                      child: Text(
+                        "sdaasdasdds",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(color: AppColors.obsidianInvert),
+                      ),
                     )
-                  : Container();
+                  : Container(
+                      height: 0,
+                      width: 0,
+                      child: Text(
+                        "sdaasdasdds",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(color: AppColors.obsidianInvert),
+                      ),
+                    );
             },
           );
         },

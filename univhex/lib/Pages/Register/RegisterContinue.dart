@@ -6,7 +6,8 @@ import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/user_auth.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
-import 'package:univhex/Router/app_router.dart';
+
+import 'package:univhex/Router/app_router.gr.dart';
 import 'package:univhex/Widgets/appTextValidators.dart';
 
 @RoutePage(name: "RegisterContinueRoute")

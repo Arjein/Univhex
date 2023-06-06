@@ -39,6 +39,7 @@ Future<bool> addNewPostDB(UnivhexPost newPost) async {
       hexedBy: newPost.hexedBy,
       hexCount: newPost.hexCount,
       comments: newPost.comments,
+      media: newPost.media,
     );
 
     await newPostRef.set(updatedPost.toFirestore());

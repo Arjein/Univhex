@@ -2,7 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Router/app_router.dart';
+
+import 'package:univhex/Router/app_router.gr.dart';
 
 class DiscoverTile extends StatelessWidget {
   const DiscoverTile({super.key, required this.user, required this.image});

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_comment.dart';
 import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Router/app_router.dart';
+import 'package:univhex/Router/app_router.gr.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget({Key? key, required this.comment}) : super(key: key);

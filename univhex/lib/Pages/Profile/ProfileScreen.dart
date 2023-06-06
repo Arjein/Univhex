@@ -12,7 +12,8 @@ import 'package:univhex/Objects/post_interaction_bar.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
 import 'package:univhex/Pages/Profile/hex_avatar.dart';
-import 'package:univhex/Router/app_router.dart';
+
+import 'package:univhex/Router/app_router.gr.dart';
 import 'package:image_picker/image_picker.dart';
 
 @RoutePage(name: 'ProfilePageRoute')
@@ -254,9 +255,9 @@ class UserInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<int, String> _gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
+    Map<int, String> gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
     int grade = int.parse(CurrentUser.user!.yearOfStudy!);
-    String year = _gradeMap[grade]!;
+    String year = gradeMap[grade]!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
