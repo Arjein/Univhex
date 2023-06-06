@@ -1,10 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Widgets/appButtons.dart';
+import 'package:univhex/Router/app_router.gr.dart';
+
 import 'package:univhex/Widgets/appTextFields.dart';
 import 'package:univhex/Widgets/appTextValidators.dart';
 
-import 'RegisterContinue.dart';
 
 class AppRegisterForm extends StatefulWidget {
   const AppRegisterForm({
@@ -22,7 +23,6 @@ class AppRegisterFormState extends State<AppRegisterForm> {
   String? _surname;
   String? _email;
   String? _password;
-  String? gender;
   String? _pwauth;
   // Controllers for the data we need to read.
   final TextEditingController _nameController = TextEditingController();
@@ -64,10 +64,10 @@ class AppRegisterFormState extends State<AppRegisterForm> {
             children: [
               Text(
                 "Personal",
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.displaySmall,
                 textAlign: TextAlign.center,
               ),
-              CurrentUser.addVerticalSpace(10),
+              CurrentUser.addVerticalSpace(5),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 SizedBox(
                   width: 150,
@@ -115,23 +115,28 @@ class AppRegisterFormState extends State<AppRegisterForm> {
                 validator: pwauthValidator(_passwordController),
                 controller: _pwauthController,
               ),
-              CurrentUser.addVerticalSpace(3),
-              Align(
-                alignment: Alignment.centerRight,
-                child: SizedBox(
-                  width: 230,
-                  child: EntryButton(
-                      function: () {
-                        if (validateForm(_registerFormKey, context)) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: ((context) => const RegisterContinue()),
-                            ),
-                          );
-                        }
-                      },
-                      text: "Continue"),
+              CurrentUser.addVerticalSpace(2),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  minimumSize: const Size.fromHeight(40),
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onPrimaryContainer,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
                 ),
+                onPressed: () {
+                  if (validateForm(_registerFormKey, context)) {
+                    context.router.push(RegisterContinueRoute(
+                        email: _email!,
+                        name: _name!,
+                        surname: _surname!,
+                        password: _password!));
+                  }
+                },
+                child: const Text("Continue"),
               )
             ],
           ),
@@ -140,6 +145,3 @@ class AppRegisterFormState extends State<AppRegisterForm> {
     );
   }
 }
-
-// ignore: camel_case_types
-

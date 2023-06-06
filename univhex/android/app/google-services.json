@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "941117997109",
+    "project_id": "univhex-50601",
+    "storage_bucket": "univhex-50601.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941117997109:android:af799f3fe56a2541ecf17c",
+        "android_client_info": {
+          "package_name": "com.example.univhex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB18tDVRnI2T6Zmilw4lqClzK9Tm4rYt7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

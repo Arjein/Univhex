@@ -69,6 +69,7 @@ FormFieldValidator pwauthValidator(TextEditingController currentPass) {
     if (currentPass.text != value) {
       return 'Passwords Does not Match!';
     }
+    return null;
   };
 }
 

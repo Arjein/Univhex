@@ -1,42 +1,117 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
-import 'package:univhex/Constants/Constants.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Objects/post_detail.dart';
+import 'package:univhex/Firebase/firestore.dart';
+
 import 'package:univhex/Objects/post_interaction_bar.dart';
+import 'package:univhex/Pages/Home/univhex_add_post_widget.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
-import 'package:univhex/Pages/Profile/ProfileScreen.dart';
-import 'package:univhex/Pages/page_navigator.dart';
+import 'package:lottie/lottie.dart';
 
-class HomePage extends StatelessWidget {
+@RoutePage(name: 'HomePageRoute')
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<List<UnivhexPost>> _feedFuture;
+
+  Future<void> _refreshFeed() async {
+    _feedFuture = fetchFeed(CurrentUser.user!.university!);
+    setState(() {
+      debugPrint("Refresh Feed");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _feedFuture = fetchFeed(CurrentUser.user!.university!);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        leading: Container(
+          padding: const EdgeInsets.only(left: 13),
+          child: Lottie.network(
+              'https://assets9.lottiefiles.com/packages/lf20_d6619szt.json'),
+        ),
+        title: Text(CurrentUser.user!.university!.toString()),
       ),
-      body: ListView.builder(
-        itemCount: Constants.UnivhexPosts.length,
-        itemBuilder: (context, index) {
-          UnivhexPost currentPost = Constants.UnivhexPosts[index];
-          return Column(
-            children: [
-              UnivhexPostWidget(post: currentPost, height: 0),
-              PostInteractionBar(
-                post: currentPost,
-              ),
-              const Divider(
-                height: 0,
-                // indent: 10,
-                color: AppColors.obsidianInvert,
-                thickness: 0.5,
-              )
-            ],
-          );
-        },
+      body: RefreshIndicator(
+        color: AppColors.myAqua,
+        backgroundColor: AppColors.myPurple,
+        displacement: 0,
+        onRefresh: _refreshFeed,
+        child: FutureBuilder<List<UnivhexPost>>(
+          future: _feedFuture,
+          builder: (context, snapshot) {
+            bool isRefreshing =
+                snapshot.connectionState == ConnectionState.waiting;
+
+            if (snapshot.hasError) {
+              return Center(child: Text("Error Occurred ${snapshot.error}"));
+            } else {
+              List<UnivhexPost> dataList = snapshot.data ?? [];
+              return CustomScrollView(
+                slivers: [
+                  isRefreshing
+                      ? SliverToBoxAdapter(
+                          child: CurrentUser.addVerticalSpace(5),
+                        )
+                      : SliverToBoxAdapter(child: Container()),
+                  SliverToBoxAdapter(
+                    child: UnivhexAddPostWidget(onPressed: _refreshFeed),
+                  ),
+                  // Show the posts if there are any, or an empty widget
+
+                  if (dataList.isNotEmpty)
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        addRepaintBoundaries: false,
+                        (context, index) {
+                          UnivhexPost currentPost = dataList[index];
+
+                          return Column(
+                            children: [
+                              GestureDetector(
+                                onDoubleTap: () {
+                                  setState(() {
+                                    if (!currentPost.hexedBy
+                                        .contains(CurrentUser.user!.email)) {
+                                      currentPost.addLike();
+                                    }
+                                  });
+                                },
+                                child: UnivhexPostWidget(
+                                  post: currentPost,
+                                  height: 0,
+                                ),
+                              ),
+                              PostInteractionBar(post: currentPost),
+                              const Divider(
+                                height: 0,
+                                color: AppColors.obsidianInvert,
+                                thickness: 0.5,
+                              ),
+                            ],
+                          );
+                        },
+                        childCount: dataList.length,
+                      ),
+                    ),
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

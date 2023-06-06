@@ -1,13 +1,27 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/Constants.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Widgets/appButtons.dart';
+import 'package:univhex/Firebase/user_auth.dart';
+import 'package:univhex/Objects/app_user.dart';
+import 'package:univhex/Objects/user_secure_storage.dart';
+import 'package:univhex/Router/app_router.gr.dart';
+import 'package:univhex/Widgets/appTextValidators.dart';
 
+@RoutePage(name: "RegisterContinueRoute")
 class RegisterContinue extends StatelessWidget {
   const RegisterContinue({
     super.key,
+    required this.name,
+    required this.surname,
+    required this.email,
+    required this.password,
   });
+  final String name;
+  final String surname;
+  final String email;
+  final String password;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +32,11 @@ class RegisterContinue extends StatelessWidget {
           end: Alignment.bottomCenter,
           stops: [
             0.01,
-            0.3,
+            0.24,
           ],
           colors: [
             AppColors.myPurple,
-            AppColors.myBlack,
+            AppColors.bgColor,
           ],
         ),
       ),
@@ -35,11 +49,16 @@ class RegisterContinue extends StatelessWidget {
             children: [
               Text(
                 "University",
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.displaySmall,
                 textAlign: TextAlign.center,
               ),
-              CurrentUser.addVerticalSpace(10),
-              const registerContinueForm(),
+              CurrentUser.addVerticalSpace(6),
+              registerContinueForm(
+                email: email,
+                name: name,
+                surname: surname,
+                password: password,
+              ),
             ],
           ),
         ),
@@ -51,7 +70,15 @@ class RegisterContinue extends StatelessWidget {
 class registerContinueForm extends StatefulWidget {
   const registerContinueForm({
     super.key,
+    required this.name,
+    required this.surname,
+    required this.email,
+    required this.password,
   });
+  final String name;
+  final String surname;
+  final String email;
+  final String password;
 
   @override
   State<registerContinueForm> createState() => _registerContinueFormState();
@@ -59,6 +86,7 @@ class registerContinueForm extends StatefulWidget {
 
 class _registerContinueFormState extends State<registerContinueForm> {
   final _registerFormKey = GlobalKey<FormState>();
+  bool _isRegistering = false;
   String? university;
   String? major;
   String? yearOfStudy;
@@ -71,6 +99,7 @@ class _registerContinueFormState extends State<registerContinueForm> {
           CurrentUser.addVerticalSpace(2),
           DropdownButtonFormField(
             value: university,
+            validator: defaultValidatorDropDown("University"),
             items:
                 Constants.schools.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -85,9 +114,10 @@ class _registerContinueFormState extends State<registerContinueForm> {
               });
             },
           ),
-          CurrentUser.addVerticalSpace(2),
+          CurrentUser.addVerticalSpace(4),
           DropdownButtonFormField(
             value: major,
+            validator: defaultValidatorDropDown("Major"),
             items:
                 Constants.fields.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -102,9 +132,10 @@ class _registerContinueFormState extends State<registerContinueForm> {
             },
             hint: const Text("Please Select Your Major"),
           ),
-          CurrentUser.addVerticalSpace(2),
+          CurrentUser.addVerticalSpace(4),
           DropdownButtonFormField(
             value: yearOfStudy,
+            validator: defaultValidatorDropDown("Year of Study"),
             items:
                 Constants.years.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -119,8 +150,53 @@ class _registerContinueFormState extends State<registerContinueForm> {
             },
             hint: const Text("Please Select Your Year of Study"),
           ),
-          CurrentUser.addVerticalSpace(5),
-          EntryButton(function: () {}, text: "Sign Up!"),
+          CurrentUser.addVerticalSpace(13),
+          !_isRegistering
+              ? ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size.fromHeight(40),
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onPrimaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  onPressed: () async {
+                    setState(() {
+                      _isRegistering = true;
+                    });
+                    if (validateForm(_registerFormKey, context)) {
+                      AppUser newUser = AppUser(
+                        id: "",
+                        email: widget.email,
+                        name: widget.name,
+                        surname: widget.surname,
+                        password: widget.password,
+                        university: university,
+                        fieldOfStudy: major,
+                        yearOfStudy: yearOfStudy,
+                        imgUrl: 'assets/images/icon.png',
+                        hexPoints: 0,
+                      );
+                      if (await registerUser(newUser)) {
+                        await UserSecureStorage.setEmail(newUser.email!);
+                        setState(() {
+                          _isRegistering = false;
+                        });
+                        // Herşeyi poplayıp homeu puslicaz
+                        context.router.popUntil(
+                            (route) => route.settings.name == '/auth');
+                        context.router.push(LoginPageRoute());
+                      }
+                    }
+                  },
+                  child: const Text("Sign Up!"))
+              : const CircularProgressIndicator(
+                  color: AppColors.myLightBlue,
+                  backgroundColor: AppColors.myPurple,
+                ),
         ],
       ),
     );

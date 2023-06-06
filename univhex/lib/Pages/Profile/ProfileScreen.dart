@@ -1,100 +1,174 @@
+import 'dart:io';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/cloud_storage.dart';
+import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Objects/app_user.dart';
+import 'package:univhex/Objects/post_interaction_bar.dart';
+import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Objects/univhex_post_widget.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:univhex/Router/app_router.gr.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key, required this.currentUser});
-  final AppUser? currentUser; // Current user is required.
+@RoutePage(name: 'ProfilePageRoute')
+class ProfilePage extends StatefulWidget {
+  ProfilePage({super.key, required this.user});
+  AppUser? user;
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool _isUploading = false;
+
+  Future<void> _reloadProfile() async {
+    widget.user = await readUserfromDB(widget.user!.id!);
+    setState(() {});
+  }
+
+  Future<void> selectProfilePicture() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    debugPrint(pickedFile.toString());
+    if (pickedFile != null) {
+      // Use the picked image file for further processing (e.g., upload to Firebase Storage)
+      setState(() {
+        _isUploading = true;
+      });
+
+      final imageFile = File(pickedFile.path);
+
+      // Call the uploadProfilePicture function to upload the selected image to Firebase Storage
+      final String imgURL =
+          await uploadProfilePicture(widget.user!.id!, imageFile.path);
+
+      setState(() {
+        saveProfilePictureUrl(widget.user!.id!, imgURL);
+        _isUploading = false;
+      });
+    } else {
+      // Handle when the user cancels the image selection
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 40,
         title: Text(
-          currentUser!.email!,
+          widget.user!.email!,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {
-              /* TODO 
-          Navigate to settings page, where user can change some required settings.
-          */
+              context.router.push(const SettingsRoute());
             },
             icon: const Icon(Icons.settings),
           )
         ],
       ),
-      body: Column(
-        children: [
-          CurrentUser.addVerticalSpace(3),
-          SizedBox(
-            height: CurrentUser.deviceHeight! * 0.22,
-            width: CurrentUser.deviceWidth,
-            child: Column(
-              children: [
-                HexagonWidget.flat(
-                  width: CurrentUser.deviceWidth! * 0.4,
-                  color: AppColors.myPurple,
-                  child: AspectRatio(
-                    aspectRatio: HexagonType.FLAT.ratio,
-                    child: HexagonWidget.flat(
-                      width: MediaQuery.of(context).size.width * 0.35,
-                      child: AspectRatio(
-                        aspectRatio: HexagonType.FLAT.ratio,
-                        child: Center(
-                          child: Image.asset(
-                            'assets/images/icon.png',
-                            fit: BoxFit.fitWidth,
+      body: RefreshIndicator(
+        onRefresh: () {
+          return _reloadProfile();
+        },
+        child: Expanded(
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    CurrentUser.addVerticalSpace(3),
+                    SizedBox(
+                      height: CurrentUser.deviceHeight! * 0.22,
+                      width: CurrentUser.deviceWidth,
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              selectProfilePicture();
+                            },
+                            child: HexagonWidget.flat(
+                              width: CurrentUser.deviceWidth! * 0.4,
+                              color: AppColors.myPurple,
+                              child: !_isUploading
+                                  ? AspectRatio(
+                                      aspectRatio: HexagonType.FLAT.ratio,
+                                      child: HexagonWidget.flat(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.35,
+                                        child: AspectRatio(
+                                          aspectRatio: HexagonType.FLAT.ratio,
+                                          child: widget.user!.imgUrl ==
+                                                  'assets/images/icon.png'
+                                              ? Image.asset(
+                                                  'assets/images/icon.png',
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.network(
+                                                  CurrentUser.user!.imgUrl!,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
+                                      ),
+                                    )
+                                  : const CircularProgressIndicator(
+                                      backgroundColor: AppColors.myPurple,
+                                      color: AppColors.myBlue),
+                            ),
                           ),
-                        ),
-                        /* Image is uploaded via: 
-                        Image.asset(
-                          'assets/images/icon.png',
-                          fit: BoxFit.fitWidth,
-                        ),
-                        */
+                          CurrentUser.addVerticalSpace(1),
+                          Text(
+                            "${widget.user!.name} ${widget.user!.surname}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(color: AppColors.obsidianInvert),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.user!.hexPoints.toString(),
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        CurrentUser.addHorizontalSpace(2),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.13,
+                          child: Image.asset("assets/images/icon.png"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                CurrentUser.addVerticalSpace(1.3),
-                Text(
-                  "${currentUser!.name} ${currentUser!.surname}",
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                currentUser!.hexPoints.toString(),
-                style: Theme.of(context).textTheme.headline3,
               ),
-              CurrentUser.addHorizontalSpace(2),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.13,
-                child: Image.asset("assets/images/icon.png"),
+              SliverToBoxAdapter(
+                child: CurrentUser.addVerticalSpace(1.2),
+              ),
+              SliverToBoxAdapter(
+                child: ProfileTabBar(userId: widget.user!.id!),
               ),
             ],
           ),
-          CurrentUser.addVerticalSpace(1.2),
-          const ProfileTabBar()
-        ],
+        ),
       ),
     );
   }
 }
 
 class ProfileTabBar extends StatefulWidget {
-  const ProfileTabBar({super.key});
-
+  const ProfileTabBar({super.key, required this.userId});
+  final String userId;
   @override
   State<ProfileTabBar> createState() => _ProfileTabBarState();
 }
@@ -104,12 +178,12 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Container(
-        color: AppColors.myBlack,
+      child: SizedBox(
         height: CurrentUser.deviceHeight! * 0.46,
         child: Column(
-          children: const [
-            TabBar(
+          children: [
+            const TabBar(
+              indicatorColor: AppColors.myAqua,
               tabs: [
                 Tab(icon: Icon(Icons.post_add_outlined)),
                 Tab(icon: Icon(Icons.question_mark)),
@@ -118,8 +192,8 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
             Expanded(
               child: TabBarView(
                 children: [
-                  UserPostList(),
-                  UserInformation(),
+                  UserPostList(userId: widget.userId),
+                  const UserInformation(),
                 ],
               ),
             ),
@@ -138,21 +212,42 @@ class UserInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<int, String> _gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
+    Map<int, String> gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
     int grade = int.parse(CurrentUser.user!.yearOfStudy!);
-    String year = _gradeMap[grade]!;
-//
+    String year = gradeMap[grade]!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(CurrentUser.user!.university!),
+          CurrentUser.addVerticalSpace(2),
+          Center(
+              child: Text(
+            CurrentUser.user!.university!,
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall!
+                .copyWith(color: AppColors.obsidianInvert),
+          )),
+          CurrentUser.addVerticalSpace(2),
           CurrentUser.addVerticalSpace(2),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(CurrentUser.user!.fieldOfStudy!),
-              Text("${CurrentUser.user!.yearOfStudy!}$year Grade"),
+              Text(
+                CurrentUser.user!.fieldOfStudy!,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(color: AppColors.obsidianInvert),
+              ),
+              Text(
+                "${CurrentUser.user!.yearOfStudy!}$year Grade",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: AppColors.obsidianInvert,
+                    ),
+              ),
             ],
           ),
         ],
@@ -161,27 +256,58 @@ class UserInformation extends StatelessWidget {
   }
 }
 
-class UserPostList extends StatelessWidget {
+// ignore: must_be_immutable
+class UserPostList extends StatefulWidget {
   const UserPostList({
     Key? key,
+    required this.userId,
   }) : super(key: key);
 
+  final String userId;
+
+  @override
+  State<UserPostList> createState() => _UserPostListState();
+}
+
+class _UserPostListState extends State<UserPostList> {
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      // Create a grid with 3 columns. If you change the scrollDirection to
-      // horizontal, this produces 3 rows.
-      crossAxisCount: 3,
-      // Generate 100 widgets that display their index in the List.
-      children: List.generate(10, (index) {
-        return Center(
-          child: Text(
-            // This should be a minimal postview.
-            'POST $index',
-            style: Theme.of(context).textTheme.headline5,
-          ),
-        );
-      }),
+    return FutureBuilder(
+      future: fetchUserPosts(widget.userId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text("Error Occurred ${snapshot.error}"));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          List<UnivhexPost> dataList = snapshot.data ?? [];
+
+          // UnivhexPost currentPost = dataList[index];
+          return dataList.isNotEmpty
+              ? ListView.builder(
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index) {
+                    UnivhexPost currentPost = dataList[index];
+                    return Column(
+                      children: [
+                        UnivhexPostWidget(
+                          post: currentPost,
+                          height: 0,
+                        ),
+                        PostInteractionBar(post: currentPost),
+                        const Divider(
+                          height: 0,
+                          color: AppColors.obsidianInvert,
+                          thickness: 0.5,
+                        ),
+                      ],
+                    );
+                  },
+                )
+              : Container();
+        }
+      },
     );
   }
 }
