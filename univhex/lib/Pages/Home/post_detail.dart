@@ -41,7 +41,7 @@ class _PostDetailState extends State<PostDetail> {
         appBar: AppBar(
           title: const Text("Post Flood"),
         ),
-        body: Column(
+        body: ListView(
           children: [
             GestureDetector(
               onDoubleTap: () {
@@ -67,86 +67,77 @@ class _PostDetailState extends State<PostDetail> {
               color: AppColors.obsidianInvert,
               thickness: 0.5,
             ),
-
             const Divider(
               height: 0.2,
               color: AppColors.myAqua,
               thickness: 1,
             ),
             CurrentUser.addVerticalSpace(1),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  widget.post.comments.isNotEmpty
-                      ? Expanded(
-                          child: ListView.builder(
-                            itemCount: widget.post.comments.length,
-                            itemBuilder: (context, index) {
-                              return CommentWidget(
-                                  comment: AppComment.fromJson(
-                                      widget.post.comments[index]));
-                            },
-                          ),
-                        )
-                      : Container(),
-                  Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
-                            child: CircleAvatar(
-                              backgroundImage: _avatarImageProvider,
-                            ),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              autofocus: widget.autoFocus,
-                              keyboardType: TextInputType.name,
-                              controller: _controller,
-                              minLines: 1,
-                              maxLines: 4,
-                              decoration: InputDecoration(
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: AppColors.myPurple,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16)),
-                                enabledBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: AppColors.myLightBlue, width: 1.0),
-                                ),
-                                hintText: "Leave a comment!",
-                                suffixIcon: TextButton(
-                                  onPressed: () {
-                                    AppComment comment = AppComment(
-                                      userid: CurrentUser.user!.id!,
-                                      textContent: _controller.text,
-                                      dateTime: DateTime.now(),
-                                    );
-                                    setState(() {
-                                      widget.post.addComment(comment);
-                                      _controller.clear();
-                                    });
-                                  },
-                                  child: const Text("Share"),
-                                ),
-                              ),
-                            ),
-                          ),
-                          CurrentUser.addHorizontalSpace(2.5)
-                        ],
+            widget.post.comments.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: widget.post.comments.length,
+                    itemBuilder: (context, index) {
+                      return CommentWidget(
+                          comment:
+                              AppComment.fromJson(widget.post.comments[index]));
+                    },
+                  )
+                : Container(),
+            Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+                      child: CircleAvatar(
+                        backgroundImage: _avatarImageProvider,
                       ),
-                      CurrentUser.addVerticalSpace(2),
-                    ],
-                  ),
-                ],
-              ),
-            )
-            // Comment Field
+                    ),
+                    Flexible(
+                      child: TextField(
+                        autofocus: widget.autoFocus,
+                        keyboardType: TextInputType.name,
+                        controller: _controller,
+                        minLines: 1,
+                        maxLines: 4,
+                        decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: AppColors.myPurple,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(16)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.myLightBlue, width: 1.0),
+                          ),
+                          hintText: "Leave a comment!",
+                          suffixIcon: TextButton(
+                            onPressed: () {
+                              AppComment comment = AppComment(
+                                userid: CurrentUser.user!.id!,
+                                textContent: _controller.text,
+                                dateTime: DateTime.now(),
+                              );
+                              setState(() {
+                                widget.post.addComment(comment);
+                                _controller.clear();
+                              });
+                            },
+                            child: const Text("Share"),
+                          ),
+                        ),
+                      ),
+                    ),
+                    CurrentUser.addHorizontalSpace(2.5)
+                  ],
+                ),
+                CurrentUser.addVerticalSpace(2),
+              ],
+            ),
           ],
         ),
       ),

@@ -127,7 +127,8 @@ Future<List<UnivhexPost>> fetchUnivhexes(String universityName) async {
   try {
     final snapshot = await FirebaseFirestore.instance
         .collection('Posts')
-        .where('University', isEqualTo: universityName) // error generated here
+        .where('University',
+            isEqualTo: universityName.toLowerCase()) // error generated here
         .where('isAnonymous', isEqualTo: false)
         .withConverter(
           fromFirestore: UnivhexPost.fromFirestore,

@@ -56,35 +56,37 @@ class UnivhexPage extends StatelessWidget {
             );
           }
           List<Univhex> univhexList = snapshot.data as List<Univhex>;
-
           return ListView.builder(
             itemCount: univhexList.length,
             itemBuilder: (context, index) {
               Univhex univhex = univhexList[index];
               int i = -1;
               return univhex.univhexes.isNotEmpty
-                  ? Container(
-                      height: 0,
-                      width: 0,
-                      child: Text(
-                        "sdaasdasdds",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(color: AppColors.obsidianInvert),
-                      ),
+                  ? Column(
+                      children: [
+                        Text(
+                          univhex.uniName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(color: AppColors.obsidianInvert),
+                        ),
+                        for (var univhexPost in univhex.univhexes)
+                          Column(
+                            children: [
+                              UnivhexWidget(
+                                post: univhexPost,
+                                order: i,
+                              ),
+                              if (++i <= univhex.univhexes.length)
+                                const Divider(
+                                  thickness: 1.5,
+                                ),
+                            ],
+                          ),
+                      ],
                     )
-                  : Container(
-                      height: 0,
-                      width: 0,
-                      child: Text(
-                        "sdaasdasdds",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(color: AppColors.obsidianInvert),
-                      ),
-                    );
+                  : const SizedBox.shrink();
             },
           );
         },
