@@ -68,7 +68,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
               onTap: () {
                 if (CurrentUser.inPost == null || CurrentUser.inPost == false) {
                   CurrentUser.inPost = true;
-                  debugPrint("User Inpost?: ${CurrentUser.inPost}");
+
                   context.router.push(
                     PostDetailRoute(
                       post: widget.post,
@@ -88,8 +88,6 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                       onTap: () {
                         if (author.id != CurrentUser.user!.id) {
                           context.router.push(ProfilePageRoute(user: author));
-                        } else {
-                          debugPrint("Same Person");
                         }
                       },
                       child: Row(

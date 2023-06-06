@@ -43,7 +43,7 @@ class AppUser {
     String result = "";
     for (int i = 0; i < strSplit.length; i++) {
       String str = strSplit[i];
-      debugPrint(str);
+
       result += str.substring(0, 1).toUpperCase() + str.substring(1);
       if (i < strSplit.length - 1) {
         result += " ";

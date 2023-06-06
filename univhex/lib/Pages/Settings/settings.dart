@@ -11,19 +11,19 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
+      body: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
               onPressed: () async {
                 if (await UserSecureStorage.deleteStorage()) {
                   context.router.replaceAll([const AuthRoute()]);
                 }
               },
               child: const Text("Log Out"),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

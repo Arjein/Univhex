@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/cloud_storage.dart';
@@ -44,14 +42,11 @@ class _ProfilePageState extends State<ProfilePage> {
       pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
-        // Use the picked image file for further processing (e.g., upload to Firebase Storage)
         setState(() {
           _isUploading = true;
         });
 
         final imageFile = File(pickedFile.path);
-
-        // Call the uploadProfilePicture function to upload the selected image to Firebase Storage
         imgURL = await uploadProfilePicture(widget.user!.id!, imageFile.path);
       }
     }
@@ -86,9 +81,9 @@ class _ProfilePageState extends State<ProfilePage> {
         onRefresh: () {
           return _reloadProfile();
         },
-        child: Expanded(
-          child: CustomScrollView(
-            slivers: [
+        child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
               SliverToBoxAdapter(
                 child: Column(
                   children: [
@@ -105,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return Container(
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                                 color: AppColors.bgColor),
                                             height:
                                                 CurrentUser.deviceHeight! * 0.3,
@@ -198,13 +193,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: CurrentUser.addVerticalSpace(1.2),
-              ),
-              SliverToBoxAdapter(
-                child: ProfileTabBar(user: widget.user!),
-              ),
-            ],
+              SliverToBoxAdapter(child: CurrentUser.addVerticalSpace(1.2)),
+            ];
+          },
+          body: ProfileTabBar(
+            user: widget.user!,
           ),
         ),
       ),
@@ -213,7 +206,10 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class ProfileTabBar extends StatefulWidget {
-  const ProfileTabBar({super.key, required this.user});
+  const ProfileTabBar({
+    super.key,
+    required this.user,
+  });
   final AppUser user;
   @override
   State<ProfileTabBar> createState() => _ProfileTabBarState();
@@ -224,27 +220,24 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Container(
-        height: CurrentUser.deviceHeight! * 0.48, // Burayı düzeltmek lazım
-        child: Column(
-          children: [
-            TabBar(
-              indicatorColor: AppColors.myAqua,
-              tabs: [
-                Tab(icon: Icon(Icons.post_add_outlined)),
-                Tab(icon: Icon(Icons.question_mark)),
+      child: Column(
+        children: [
+          const TabBar(
+            indicatorColor: AppColors.myAqua,
+            tabs: [
+              Tab(icon: Icon(Icons.post_add_outlined)),
+              Tab(icon: Icon(Icons.question_mark)),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                UserPostList(userId: widget.user.id!),
+                UserInformation(user: widget.user),
               ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  UserPostList(userId: widget.user.id!),
-                  UserInformation(user: widget.user),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -302,7 +295,6 @@ class UserInformation extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class UserPostList extends StatefulWidget {
   const UserPostList({
     Key? key,
@@ -335,9 +327,7 @@ class _UserPostListState extends State<UserPostList> {
                     UnivhexPost currentPost = dataList[index];
                     return Column(
                       children: [
-                        UnivhexPostWidget(
-                          post: currentPost,
-                        ),
+                        UnivhexPostWidget(post: currentPost),
                         PostInteractionBar(post: currentPost),
                         const Divider(
                           height: 0,

@@ -7,6 +7,7 @@ import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
 import 'package:univhex/Pages/Univhex/univhex.dart';
+import 'package:univhex/Widgets/univhex_progress_indicator.dart';
 
 import 'univhex_widget.dart';
 
@@ -32,7 +33,7 @@ class _UnivhexPageState extends State<UnivhexPage> {
 
   Future<void> _onRefresh() {
     setState(() {});
-    return Future.delayed(const Duration(milliseconds: 500));
+    return Future.delayed(Duration(milliseconds: 500));
   }
 
   @override
@@ -52,7 +53,7 @@ class _UnivhexPageState extends State<UnivhexPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: UnivhexProgressIndicator(isHorizontal: false),
               );
             } else if (snapshot.hasError) {
               return Center(

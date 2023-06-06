@@ -52,8 +52,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                         CurrentUser.inPost = false;
                         if (author!.id != CurrentUser.user!.id) {
                           context.router.push(ProfilePageRoute(user: author));
-                        } else {
-                          debugPrint("Same Person");
                         }
                       },
                     ),
@@ -66,7 +64,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${author!.name} ${author.surname}",
+                        "${author!.camelAttr(author.name!)} ${author.camelAttr(author.surname!)}",
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                       Text(widget.comment.textContent),

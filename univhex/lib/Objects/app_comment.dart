@@ -24,7 +24,9 @@ class AppComment {
     return AppComment(
       userid: jsonData["UserId"],
       textContent: jsonData["TextContent"],
-      dateTime: jsonData["Datetime"]is DateTime ?  jsonData['Datetime']:jsonData["Datetime"].toDate() ,
+      dateTime: jsonData["Datetime"] is DateTime
+          ? jsonData['Datetime']
+          : jsonData["Datetime"].toDate(),
     );
   }
 
@@ -49,11 +51,11 @@ class AppComment {
             fromFirestore: AppUser.fromFirestore,
             toFirestore: (AppUser user, _) => user.toFirestore(),
           );
-      debugPrint("USER_id:" + userid);
+
       final docSnap = await ref.get();
 
       final AppUser user = docSnap.data()!;
-      debugPrint("RETRIEVED USER:" + user.toString());
+
       return user;
     } catch (e) {
       return null;

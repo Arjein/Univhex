@@ -38,7 +38,6 @@ class _PostDetailState extends State<PostDetail> {
   @override
   Widget build(BuildContext context) {
     _loadAvatarImage();
-    debugPrint("This widget was built!");
 
     return WillPopScope(
       onWillPop: () {
@@ -156,7 +155,6 @@ class _PostDetailState extends State<PostDetail> {
 Future<bool> _onBackPressed() {
   // Set your variable to false here
   CurrentUser.inPost = false;
-  debugPrint("Back pressed: in post?: ${CurrentUser.inPost}");
 
   // Return true to allow the back button to pop the current screen
   return Future.value(true);

@@ -29,12 +29,11 @@ void main() async {
   String? email = await UserSecureStorage.getEmail();
   String? password = await UserSecureStorage.getPassword();
   bool isLogged = await authUser(email, password);
-  debugPrint("Is Logged: $isLogged");
 
   if (isLogged) {
     user = await readUserfromDB(await UserSecureStorage.getFirebaseUID());
     CurrentUser.user = user;
-    debugPrint("Fetched user:$user");
+
     runApp(
       InitApp(isLogged: isLogged, user: CurrentUser.user!),
     );

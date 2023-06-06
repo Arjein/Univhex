@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:univhex/Constants/AppColors.dart';
+import 'package:univhex/Widgets/univhex_progress_indicator.dart';
 
 import '../../Constants/current_user.dart';
 import '../../Firebase/firestore.dart';
@@ -112,7 +113,6 @@ class UnivhexAddPostWidget extends HookWidget {
                 );
 
                 if (await addNewPostDB(newPost)) {
-                  debugPrint("Post successfully added to Database!");
                   isUploading.value = false;
                 }
 
@@ -125,17 +125,17 @@ class UnivhexAddPostWidget extends HookWidget {
               }
             : () {},
         icon: !isUploading.value
-            ? const Icon(
+            ? Icon(
                 Icons.send_outlined,
-                color: AppColors.myPurple,
+                color: !isAnonymous.value
+                    ? AppColors.myPurple
+                    : AppColors.myLightBlue,
               )
             : const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  color: AppColors.myPurple,
-                  backgroundColor: AppColors.myLightBlue,
-                )),
+                height: 50,
+                width: 50,
+                child: UnivhexProgressIndicator(isHorizontal: true),
+              ),
       );
 
   /// Uploads an image to Firebase Storage.

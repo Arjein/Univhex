@@ -19,14 +19,13 @@ String _hashPassword(password) {
 }
 
 Future<bool> registerUser(AppUser user) async {
-  debugPrint('Sign-Up Name: ${user.email}, Password: ${user.password}');
   try {
     await _auth.createUserWithEmailAndPassword(
         email: user.email!, password: _hashPassword(user.password));
     user.id = _auth.currentUser!.uid;
     await registerAppUserDB(user, _auth.currentUser!);
     await Future.delayed(loginTime);
-    debugPrint("Registration Successful");
+
     return true;
   } catch (e) {
     debugPrint("_auth Error$e");
@@ -36,7 +35,7 @@ Future<bool> registerUser(AppUser user) async {
 
 Future<bool> authUser(String? email, String? password) async {
   // Login olurken kullanıcı olup olmadığını kontrol et
-  debugPrint("Auth\nEmail $email Password: $password");
+
   if (email == null || password == null) {
     return false;
   }
@@ -47,11 +46,10 @@ Future<bool> authUser(String? email, String? password) async {
     await UserSecureStorage.setEmail(email);
     await UserSecureStorage.setPassword(password);
     await UserSecureStorage.setFirebaseUID(_auth.currentUser!.uid);
-    debugPrint("şifre setlendi");
+
     CurrentUser.firebaseUser = _auth.currentUser;
     return true;
   } catch (e) {
-    debugPrint("Error");
     debugPrint(e.toString());
     return false;
   }

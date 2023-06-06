@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
-import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Pages/Profile/ProfileScreen.dart';
+import 'package:univhex/Widgets/univhex_progress_indicator.dart';
 
 class HexAvatar extends StatelessWidget {
   HexAvatar({
@@ -45,8 +44,9 @@ class HexAvatar extends StatelessWidget {
                   ),
                 ),
               )
-            : const CircularProgressIndicator(
-                backgroundColor: AppColors.myPurple, color: AppColors.myBlue),
+            : const UnivhexProgressIndicator(
+                isHorizontal: false,
+              ),
       ),
     );
   }

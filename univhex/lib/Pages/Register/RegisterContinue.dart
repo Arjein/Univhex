@@ -9,6 +9,7 @@ import 'package:univhex/Objects/user_secure_storage.dart';
 
 import 'package:univhex/Router/app_router.gr.dart';
 import 'package:univhex/Widgets/appTextValidators.dart';
+import 'package:univhex/Widgets/univhex_progress_indicator.dart';
 
 @RoutePage(name: "RegisterContinueRoute")
 class RegisterContinue extends StatelessWidget {
@@ -171,9 +172,9 @@ class _registerContinueFormState extends State<registerContinueForm> {
                     if (validateForm(_registerFormKey, context)) {
                       AppUser newUser = AppUser(
                         id: "",
-                        email: widget.email,
-                        name: widget.name.toLowerCase(),
-                        surname: widget.surname.toLowerCase(),
+                        email: widget.email.trim(),
+                        name: widget.name..trim().toLowerCase(),
+                        surname: widget.surname.trim().toLowerCase(),
                         password: widget.password,
                         university: university!.toLowerCase(),
                         fieldOfStudy: major!.toLowerCase(),
@@ -195,10 +196,7 @@ class _registerContinueFormState extends State<registerContinueForm> {
                     ;
                   },
                   child: const Text("Sign Up!"))
-              : CircularProgressIndicator(
-                  color: AppColors.myLightBlue,
-                  backgroundColor: AppColors.myPurple,
-                ),
+              : UnivhexProgressIndicator(isHorizontal: true),
         ],
       ),
     );

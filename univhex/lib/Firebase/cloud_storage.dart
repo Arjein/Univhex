@@ -8,7 +8,6 @@ import 'package:univhex/Constants/current_user.dart';
 
 // Upload the profile picture to Firebase Cloud Storage
 Future<String> uploadProfilePicture(String userId, String imagePath) async {
-  debugPrint("Buraya girmemeli");
   final Reference storageRef =
       FirebaseStorage.instance.ref().child('profile_pictures/$userId');
   final TaskSnapshot uploadTask = await storageRef.putFile(File(imagePath));

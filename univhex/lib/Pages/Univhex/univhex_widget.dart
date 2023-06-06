@@ -1,10 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/univhex_post.dart';
-import 'package:univhex/Pages/Profile/hex_avatar.dart';
 
 class UnivhexWidget extends StatefulWidget {
   const UnivhexWidget({
@@ -56,7 +57,7 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
         future: _authorFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const SizedBox();
           } else if (snapshot.hasError) {
             return const Text('Error loading author');
           } else {
@@ -65,6 +66,7 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
               return const Text('Author not found');
             }
             _loadAvatarImage(author);
+
             return Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -73,21 +75,33 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      HexAvatar(
-                        isUploading: false,
-                        imgUrl: author.imgUrl!,
-                        width: CurrentUser.deviceWidth! * 0.14,
-                        borderColor: widget.order == -1
-                            ? AppColors.myGold
-                            : widget.order == 0
-                                ? AppColors.mySilver
-                                : widget.order == 1
-                                    ? AppColors.myBronze
-                                    : null,
-                      ),
+                      Stack(alignment: Alignment.center, children: [
+                        SizedBox(
+                          width: CurrentUser.deviceWidth! * 0.18,
+                          child: Transform.rotate(
+                            angle: pi /
+                                2, // Rotate 90 degrees. Dart uses radians, not degrees, hence we use pi/2.
+                            child: Lottie.network(
+                                'https://assets9.lottiefiles.com/packages/lf20_d6619szt.json'),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.myAqua,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: _avatarImageProvider!.image,
+                          ),
+                        ),
+                      ]),
                       CurrentUser.addHorizontalSpace(2),
                       Text(
-                        "${author.name} ${author.surname}",
+                        "${author.camelAttr(author.name!)} ${author.camelAttr(author.surname!)}",
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                       Expanded(
@@ -107,7 +121,27 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
                     padding: const EdgeInsets.all(8.0),
                     child: Align(
                       alignment: Alignment.topLeft,
-                      child: Text(widget.post.textContent),
+                      child: Row(
+                        children: [
+                          Expanded(child: Text(widget.post.textContent)),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                alignment: Alignment.centerRight,
+                                width: 40,
+                                child: Image.asset("assets/images/icon.png"),
+                              ),
+                              CurrentUser.addHorizontalSpace(2),
+                              Text(
+                                widget.post.hexCount.toString(),
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],

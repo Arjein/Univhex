@@ -13,12 +13,9 @@ import 'loginForm.dart';
 class LoginScreen extends HookWidget {
   LoginScreen({Key? key, this.email}) : super(key: key);
   String? email;
+
   @override
   Widget build(BuildContext context) {
-    final controller =
-        useAnimationController(duration: const Duration(seconds: 15))
-          ..repeat(reverse: false);
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -27,7 +24,8 @@ class LoginScreen extends HookWidget {
             children: [
               CurrentUser.addVerticalSpace(7),
               SizedBox(
-                width: 280, // To set width of our Logo. Might be modified...
+                width: CurrentUser.deviceWidth! *
+                    0.5, // To set width of our Logo. Might be modified...
                 child: Image.asset("assets/images/icon.png"),
 
                 /*

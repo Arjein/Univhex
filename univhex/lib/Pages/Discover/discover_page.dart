@@ -19,7 +19,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Future<void> searchUsers(String searchTerm) async {
     if (searchTerm == null || searchTerm.trim() == '') {
-      debugPrint("İcerdeyuim");
       _currentList = [];
       return;
     }
@@ -37,7 +36,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
         )
         .get();
     _currentList = query.docs.map((doc) => doc.data()).toList();
-    debugPrint("Current List: " + _currentList.toString());
   }
 
   @override
@@ -55,6 +53,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
+                  autofocus: true,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.search, color: AppColors.obsidianInvert),
                     border: InputBorder.none,
@@ -63,9 +62,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   autocorrect: false,
                   onChanged: (value) async {
                     await searchUsers(value);
-                    setState(() {
-                      debugPrint(value);
-                    });
+                    setState(() {});
                   },
                 ),
               ),

@@ -21,7 +21,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   String? timeType = "";
   void calcTime() {
     Duration timeDiff = DateTime.now().difference(widget.post.dateTime);
-    debugPrint(timeDiff.inHours.toString());
+
     if (timeDiff.inDays > 0) {
       timePassed = timeDiff.inDays;
       timeType = "d";
@@ -97,7 +97,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
   @override
   Widget build(BuildContext context) {
     calcTime();
-    debugPrint(widget.post.toString());
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,12 +139,14 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     onPressed: () {
                       // Navigate to post content page. A new page will be constructed for this.
 
-                      debugPrint("inPost: ${CurrentUser.inPost}");
                       if (CurrentUser.inPost == false ||
                           CurrentUser.inPost == null) {
                         CurrentUser.inPost = true;
                         context.router.push(
-                          PostDetailRoute(post: widget.post, autoFocus: true,refreshHome: null),
+                          PostDetailRoute(
+                              post: widget.post,
+                              autoFocus: true,
+                              refreshHome: null),
                         );
                       }
                     },

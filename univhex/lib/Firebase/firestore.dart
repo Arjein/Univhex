@@ -69,7 +69,7 @@ Future<List<UnivhexPost>> fetchUserPosts(String userId) async {
         .get();
     final dataList = snapshot.docs.map((doc) => doc.data()).toList();
     final userunivhexPosts = dataList.map((data) => data).toList();
-    debugPrint("Kullanıcı post sayiis:" + userunivhexPosts.length.toString());
+
     return userunivhexPosts;
   } catch (e) {
     debugPrint(e.toString());
@@ -88,11 +88,10 @@ Future<AppUser?> readUserfromDB(String? userId) async {
         );
 
     final docSnap = await ref.get();
-    debugPrint("BUM");
 
     if (docSnap.exists) {
       final AppUser user = docSnap.data()!;
-      debugPrint(user.hexPoints.toString());
+
       return user;
     }
     return null;

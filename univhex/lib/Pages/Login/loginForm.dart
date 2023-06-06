@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/firestore.dart';
@@ -9,6 +10,7 @@ import 'package:univhex/Objects/user_secure_storage.dart';
 
 import 'package:univhex/Router/app_router.gr.dart';
 import 'package:univhex/Widgets/appTextFields.dart';
+import 'package:univhex/Widgets/univhex_progress_indicator.dart';
 
 class AppLoginForm extends StatefulWidget {
   AppLoginForm({
@@ -35,7 +37,6 @@ class AppLoginFormState extends State<AppLoginForm> {
     if (widget._email == null) {
       _email = await UserSecureStorage.getEmail() ?? '';
       // _password = await UserSecureStorage.getPassword() ?? '';
-      debugPrint("Init:${_email!}");
     }
     setState(() {
       _emailController.text = _email!;
@@ -63,17 +64,12 @@ class AppLoginFormState extends State<AppLoginForm> {
         _loginFormKey.currentState!.validate()) {
       setState(() {
         loggingIn = true;
-        debugPrint(loggingIn.toString());
       });
       if (await authUser(_email, _password!)) {
-        debugPrint("User Authenticated");
         AppUser? user = await readUserfromDB(CurrentUser.firebaseUser!.uid);
         if (user != null) {
-          debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:$user");
           CurrentUser.user = user;
 
-          debugPrint(
-              "Login Succesfull!\nSubmitted Login Form\nE-mail: $_email, Password: $_password");
           context.router.push(const AppRoute());
         }
       }
@@ -134,8 +130,8 @@ class AppLoginFormState extends State<AppLoginForm> {
                   },
                   child: const Text("Sign In"),
                 )
-              : const CircularProgressIndicator(
-                  backgroundColor: AppColors.myLightBlue,
+              : const UnivhexProgressIndicator(
+                  isHorizontal: true,
                 ),
         ],
       ),

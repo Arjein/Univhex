@@ -41,7 +41,6 @@ class UnivhexPost {
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
-    debugPrint("FROMFIRESTORE (POST)");
     final jsonData = snapshot.data();
     UnivhexPost fetchedPost = UnivhexPost(
       id: snapshot.id,

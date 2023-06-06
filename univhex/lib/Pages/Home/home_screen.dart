@@ -9,6 +9,7 @@ import 'package:univhex/Pages/Home/univhex_add_post_widget.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
 import 'package:lottie/lottie.dart';
+import 'package:univhex/Widgets/univhex_progress_indicator.dart';
 
 @RoutePage(name: 'HomePageRoute')
 class HomePage extends StatefulWidget {
@@ -23,9 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _refreshFeed() async {
     _feedFuture = fetchFeed(CurrentUser.user!.university!);
-    setState(() {
-      debugPrint("Refresh Feed");
-    });
+    setState(() {});
   }
 
   @override
@@ -52,9 +51,6 @@ class _HomePageState extends State<HomePage> {
         child: FutureBuilder<List<UnivhexPost>>(
           future: _feedFuture,
           builder: (context, snapshot) {
-            bool isRefreshing =
-                snapshot.connectionState == ConnectionState.waiting;
-
             if (snapshot.hasError) {
               return Center(child: Text("Error Occurred ${snapshot.error}"));
             } else {

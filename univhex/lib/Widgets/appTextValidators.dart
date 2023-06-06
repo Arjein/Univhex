@@ -29,13 +29,11 @@ FormFieldValidator emailValidator = (value) {
 
       final splittedExtension = schoolExtension.split('.');
       for (int i = 0; i < splittedExtension.length; i++) {
-        debugPrint(splittedExtension[i]);
         if (splittedExtension[i] == "edu") {
           isEdu = true;
         }
       }
-      debugPrint(
-          "@ index: $atIndex \n School Extension: $schoolExtension \n isEdu: $isEdu ");
+
       if (isEdu) {
         return null;
       }
