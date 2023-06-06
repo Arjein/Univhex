@@ -19,24 +19,30 @@ class PostInteractionBar extends StatefulWidget {
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
-  void showReportBottomSheet() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: onPressedReportButton,
-                child: const Text('Report'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  int? timePassed;
+  String? timeType = "";
+  void calcTime() {
+    Duration timeDiff = DateTime.now().difference(widget.post.dateTime);
+    debugPrint(timeDiff.inHours.toString());
+    if (timeDiff.inDays > 0) {
+      timePassed = timeDiff.inDays;
+      timeType = "d";
+    } else {
+      if (timeDiff.inHours > 0) {
+        timePassed = timeDiff.inHours;
+        timeType = "h";
+      } else {
+        if (timeDiff.inMinutes > 2) {
+          timePassed = timeDiff.inMinutes;
+          timeType = "m";
+        } else {
+          if (timeDiff.inMinutes < 2) {
+            timePassed = null;
+            timeType = "now";
+          }
+        }
+      }
+    }
   }
 
   void onPressedReportButton() async {
@@ -47,12 +53,14 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         content: const Text('Are you sure you want to report this post?'),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             onPressed: () {
               context.router.pop();
             },
             child: const Text('Report'),
           ),
           TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.myLightBlue),
             onPressed: () => context.router.pop(),
             child: const Text('Cancel'),
           ),
@@ -61,15 +69,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
     );
 
     if (confirmed == true) {
-      // 3. Gather additional information (optional)
-
-      // ...
-
-      // 4. Send the report
       try {
-        // Check response status and provide appropriate feedback to the user
-
-        // 5. Provide feedback to the user
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Report submitted successfully'),
@@ -77,6 +77,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
         );
       } catch (e) {
         // Handle network or server errors
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -97,6 +98,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
 
   @override
   Widget build(BuildContext context) {
+    calcTime();
     debugPrint(widget.post.toString());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,6 +156,13 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
+                  CurrentUser.addHorizontalSpace(40),
+                  Text(
+                    timePassed != null
+                        ? timePassed.toString() + " " + timeType!
+                        : timeType!,
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               // Report Button
@@ -168,13 +177,21 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
+                          decoration: BoxDecoration(color: AppColors.bgColor),
+                          height: CurrentUser.deviceHeight! * 0.3,
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ElevatedButton(
-                                onPressed: onPressedReportButton,
-                                child: const Text('Report'),
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                    backgroundColor: AppColors.myBlack,
+                                  ),
+                                  onPressed: onPressedReportButton,
+                                  child: const Text('Report'),
+                                ),
                               ),
                             ],
                           ),

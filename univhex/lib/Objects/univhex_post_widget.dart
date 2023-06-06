@@ -59,9 +59,9 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
         future: _authorFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const SizedBox();
           } else if (snapshot.hasError) {
-            return const Text('Error loading author');
+            return const Text('Error: Check your Internet Connection');
           } else {
             final author = snapshot.data;
             if (author == null) {
