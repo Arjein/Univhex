@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:univhex/Constants/AppColors.dart';
+import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Pages/Discover/discover_tile.dart';
 
@@ -17,11 +18,16 @@ class _DiscoverPageState extends State<DiscoverPage> {
   List<AppUser> _currentList = [];
 
   Future<void> searchUsers(String searchTerm) async {
+    if (searchTerm == null || searchTerm.trim() == '') {
+      debugPrint("İcerdeyuim");
+      _currentList = [];
+      return;
+    }
     final query = await FirebaseFirestore.instance
         .collection('Users')
         .orderBy('Name')
-        //.where('University',
-        //   isEqualTo: CurrentUser.user!.university!.toLowerCase())
+        .where('University',
+            isEqualTo: CurrentUser.user!.university!.toLowerCase())
         .startAt([searchTerm])
         .endAt(['$searchTerm\uf8ff'])
         .limit(10)
@@ -31,6 +37,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         )
         .get();
     _currentList = query.docs.map((doc) => doc.data()).toList();
+    debugPrint("Current List: " + _currentList.toString());
   }
 
   @override

@@ -25,8 +25,9 @@ class DiscoverTile extends StatelessWidget {
           backgroundImage: image,
         ),
       ),
-      title: Text("${user.name!} ${user.surname}"),
-      subtitle: Text(user.email!),
+      title: Text(
+          "${user.camelAttr(user.name!)} ${user.camelAttr(user.surname!)}"),
+      subtitle: Text(user.camelAttr(user.fieldOfStudy!)),
       onTap: () {
         // TODO navigate to user profile
         context.router.push(ProfilePageRoute(user: user));

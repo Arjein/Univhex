@@ -25,9 +25,13 @@ class LoginScreen extends HookWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
+              CurrentUser.addVerticalSpace(7),
               SizedBox(
                 width: 280, // To set width of our Logo. Might be modified...
-                child: Transform.rotate(
+                child: Image.asset("assets/images/icon.png"),
+
+                /*
+                 Transform.rotate(
                   angle: pi /
                       2, // Rotate 90 degrees. Dart uses radians, not degrees, hence we use pi/2.
                   child: RotationTransition(
@@ -36,9 +40,10 @@ class LoginScreen extends HookWidget {
                         'https://assets9.lottiefiles.com/packages/lf20_d6619szt.json'),
                   ),
                 ),
+                */
               ),
               Text("UNIVHEX", style: Theme.of(context).textTheme.displayMedium),
-              CurrentUser.addVerticalSpace(2.5),
+              CurrentUser.addVerticalSpace(2),
               AppLoginForm(), // The form widget called here.
               Row(
                 // Dont have An account? Sign Up!

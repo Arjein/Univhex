@@ -40,10 +40,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         leading: Container(
           padding: const EdgeInsets.only(left: 13),
-          child: Lottie.network(
-              'https://assets9.lottiefiles.com/packages/lf20_d6619szt.json'),
+          child: Image.asset("assets/images/icon.png"),
         ),
-        title: Text(CurrentUser.user!.university!.toString()),
+        title: Text(CurrentUser.user!.university!.toUpperCase()),
       ),
       body: RefreshIndicator(
         color: AppColors.myAqua,
@@ -62,11 +61,6 @@ class _HomePageState extends State<HomePage> {
               List<UnivhexPost> dataList = snapshot.data ?? [];
               return CustomScrollView(
                 slivers: [
-                  isRefreshing
-                      ? SliverToBoxAdapter(
-                          child: CurrentUser.addVerticalSpace(5),
-                        )
-                      : SliverToBoxAdapter(child: Container()),
                   SliverToBoxAdapter(
                     child: UnivhexAddPostWidget(onPressed: _refreshFeed),
                   ),
@@ -85,14 +79,13 @@ class _HomePageState extends State<HomePage> {
                                 onDoubleTap: () {
                                   setState(() {
                                     if (!currentPost.hexedBy
-                                        .contains(CurrentUser.user!.email)) {
+                                        .contains(CurrentUser.user!.id)) {
                                       currentPost.addLike();
                                     }
                                   });
                                 },
                                 child: UnivhexPostWidget(
                                   post: currentPost,
-                                  height: 0,
                                 ),
                               ),
                               PostInteractionBar(post: currentPost),

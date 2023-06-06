@@ -11,9 +11,14 @@ import 'package:univhex/Pages/Univhex/univhex.dart';
 import 'univhex_widget.dart';
 
 @RoutePage(name: 'UnivhexPageRoute')
-class UnivhexPage extends StatelessWidget {
+class UnivhexPage extends StatefulWidget {
   const UnivhexPage({super.key});
 
+  @override
+  State<UnivhexPage> createState() => _UnivhexPageState();
+}
+
+class _UnivhexPageState extends State<UnivhexPage> {
   _createUnivhexListData() async {
     List<Univhex> univhexMap = [];
     for (var university in Constants.schools) {
@@ -25,71 +30,75 @@ class UnivhexPage extends StatelessWidget {
     return univhexMap;
   }
 
+  Future<void> _onRefresh() {
+    setState(() {});
+    return Future.delayed(const Duration(milliseconds: 500));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-                width: CurrentUser.deviceWidth! * 0.1,
-                child: Image.asset("assets/images/icon.png")),
-            const Text("UNIVHEX"),
-          ],
+        leading: Container(
+          padding: const EdgeInsets.only(left: 13),
+          child: Image.asset("assets/images/icon.png"),
         ),
+        title: const Text("UNIVHEX"),
       ),
-      body: FutureBuilder(
-        future: _createUnivhexListData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else if (!snapshot.hasData) {
-            return const Center(
-              child: Text('No data available'),
-            );
-          }
-          List<Univhex> univhexList = snapshot.data as List<Univhex>;
-          return ListView.builder(
-            itemCount: univhexList.length,
-            itemBuilder: (context, index) {
-              Univhex univhex = univhexList[index];
-              int i = -1;
-              return univhex.univhexes.isNotEmpty
-                  ? Column(
-                      children: [
-                        Text(
-                          univhex.uniName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: AppColors.obsidianInvert),
-                        ),
-                        for (var univhexPost in univhex.univhexes)
-                          Column(
-                            children: [
-                              UnivhexWidget(
-                                post: univhexPost,
-                                order: i,
-                              ),
-                              if (++i <= univhex.univhexes.length)
-                                const Divider(
-                                  thickness: 1.5,
-                                ),
-                            ],
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: FutureBuilder(
+          future: _createUnivhexListData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else if (!snapshot.hasData) {
+              return const Center(
+                child: Text('No data available'),
+              );
+            }
+            List<Univhex> univhexList = snapshot.data as List<Univhex>;
+            return ListView.builder(
+              itemCount: univhexList.length,
+              itemBuilder: (context, index) {
+                Univhex univhex = univhexList[index];
+                int i = -1;
+                return univhex.univhexes.isNotEmpty
+                    ? Column(
+                        children: [
+                          Text(
+                            univhex.uniName,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(color: AppColors.obsidianInvert),
                           ),
-                      ],
-                    )
-                  : const SizedBox.shrink();
-            },
-          );
-        },
+                          for (var univhexPost in univhex.univhexes)
+                            Column(
+                              children: [
+                                UnivhexWidget(
+                                  post: univhexPost,
+                                  order: i,
+                                ),
+                                if (++i <= univhex.univhexes.length)
+                                  const Divider(
+                                    thickness: 1.5,
+                                  ),
+                              ],
+                            ),
+                        ],
+                      )
+                    : const SizedBox.shrink();
+              },
+            );
+          },
+        ),
       ),
     );
   }

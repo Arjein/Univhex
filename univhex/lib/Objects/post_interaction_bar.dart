@@ -144,7 +144,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                           CurrentUser.inPost == null) {
                         CurrentUser.inPost = true;
                         context.router.push(
-                          PostDetailRoute(post: widget.post, autoFocus: true),
+                          PostDetailRoute(post: widget.post, autoFocus: true,refreshHome: null),
                         );
                       }
                     },

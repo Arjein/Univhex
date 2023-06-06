@@ -62,7 +62,10 @@ class AppRouter extends $AppRouter {
               path: "post-detail",
               page: PostDetailRoute.page,
             ),
-            AutoRoute(path: "settings", page: SettingsRoute.page)
+            AutoRoute(
+              path: "settings",
+              page: SettingsRoute.page,
+            )
           ],
         )
       ];

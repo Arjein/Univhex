@@ -38,6 +38,20 @@ class AppUser {
     return enteredPasswordHash == hashedPassword;
   }
 
+  String camelAttr(String x) {
+    List strSplit = x.split(" ");
+    String result = "";
+    for (int i = 0; i < strSplit.length; i++) {
+      String str = strSplit[i];
+      debugPrint(str);
+      result += str.substring(0, 1).toUpperCase() + str.substring(1);
+      if (i < strSplit.length - 1) {
+        result += " ";
+      }
+    }
+    return result;
+  }
+
   AppUser({
     required this.id,
     this.name,

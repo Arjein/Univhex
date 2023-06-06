@@ -12,10 +12,9 @@ class UnivhexPostWidget extends StatefulWidget {
   const UnivhexPostWidget({
     super.key,
     required this.post,
-    required this.height,
   });
   final UnivhexPost post;
-  final double height;
+
   @override
   State<UnivhexPostWidget> createState() => _UnivhexPostWidgetState();
 }
@@ -74,6 +73,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                     PostDetailRoute(
                       post: widget.post,
                       autoFocus: false,
+                      refreshHome: null,
                     ),
                   );
                 }
@@ -86,7 +86,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (author.email != CurrentUser.user!.email) {
+                        if (author.id != CurrentUser.user!.id) {
                           context.router.push(ProfilePageRoute(user: author));
                         } else {
                           debugPrint("Same Person");
@@ -111,7 +111,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                           CurrentUser.addHorizontalSpace(2),
                           Text(
                             !widget.post.isAnonymous
-                                ? "${author.name} ${author.surname}"
+                                ? "${author.camelAttr(author.name!)} ${author.camelAttr(author.surname!)}"
                                 : "Anonymous",
                             style: const TextStyle(fontWeight: FontWeight.w800),
                           ),

@@ -12,87 +12,73 @@ import 'package:auto_route/auto_route.dart' as _i13;
 import 'package:flutter/material.dart' as _i14;
 import 'package:univhex/Objects/app_user.dart' as _i16;
 import 'package:univhex/Objects/univhex_post.dart' as _i15;
-import 'package:univhex/Pages/Discover/discover_page.dart' as _i1;
-import 'package:univhex/Pages/Home/home_screen.dart' as _i2;
-import 'package:univhex/Pages/Home/post_detail.dart' as _i3;
-import 'package:univhex/Pages/Login/login_screen.dart' as _i4;
-import 'package:univhex/Pages/page_navigator.dart' as _i5;
-import 'package:univhex/Pages/Profile/ProfileScreen.dart' as _i6;
-import 'package:univhex/Pages/Register/Register.dart' as _i7;
-import 'package:univhex/Pages/Register/RegisterContinue.dart' as _i8;
-import 'package:univhex/Pages/Settings/settings.dart' as _i9;
-import 'package:univhex/Pages/Univhex/univhex_screen.dart' as _i10;
+import 'package:univhex/Pages/Discover/discover_page.dart' as _i4;
+import 'package:univhex/Pages/Home/home_screen.dart' as _i3;
+import 'package:univhex/Pages/Home/post_detail.dart' as _i2;
+import 'package:univhex/Pages/Login/login_screen.dart' as _i9;
+import 'package:univhex/Pages/page_navigator.dart' as _i10;
+import 'package:univhex/Pages/Profile/ProfileScreen.dart' as _i8;
+import 'package:univhex/Pages/Register/Register.dart' as _i6;
+import 'package:univhex/Pages/Register/RegisterContinue.dart' as _i7;
+import 'package:univhex/Pages/Settings/settings.dart' as _i1;
+import 'package:univhex/Pages/Univhex/univhex_screen.dart' as _i5;
 import 'package:univhex/Router/empty_router_pages/app_router_empty.dart'
-    as _i11;
-import 'package:univhex/Router/empty_router_pages/auth_router_empty.dart'
     as _i12;
+import 'package:univhex/Router/empty_router_pages/auth_router_empty.dart'
+    as _i11;
 
 abstract class $AppRouter extends _i13.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
   final Map<String, _i13.PageFactory> pagesMap = {
-    DiscoverPageRoute.name: (routeData) {
+    SettingsRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i1.DiscoverPage(),
-      );
-    },
-    HomePageRoute.name: (routeData) {
-      return _i13.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i2.HomePage(),
+        child: const _i1.SettingsPage(),
       );
     },
     PostDetailRoute.name: (routeData) {
       final args = routeData.argsAs<PostDetailRouteArgs>();
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i3.PostDetail(
+        child: _i2.PostDetail(
           key: args.key,
           post: args.post,
           autoFocus: args.autoFocus,
+          refreshHome: args.refreshHome,
         ),
       );
     },
-    LoginPageRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginPageRouteArgs>(
-          orElse: () => const LoginPageRouteArgs());
+    HomePageRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i4.LoginScreen(
-          key: args.key,
-          email: args.email,
-        ),
+        child: const _i3.HomePage(),
       );
     },
-    UserPageRoute.name: (routeData) {
+    DiscoverPageRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i5.UserPage(),
+        child: const _i4.DiscoverPage(),
       );
     },
-    ProfilePageRoute.name: (routeData) {
-      final args = routeData.argsAs<ProfilePageRouteArgs>();
+    UnivhexPageRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i6.ProfilePage(
-          key: args.key,
-          user: args.user,
-        ),
+        child: const _i5.UnivhexPage(),
       );
     },
     RegisterPageRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i7.Register(),
+        child: const _i6.Register(),
       );
     },
     RegisterContinueRoute.name: (routeData) {
       final args = routeData.argsAs<RegisterContinueRouteArgs>();
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i8.RegisterContinue(
+        child: _i7.RegisterContinue(
           key: args.key,
           name: args.name,
           surname: args.surname,
@@ -101,68 +87,70 @@ abstract class $AppRouter extends _i13.RootStackRouter {
         ),
       );
     },
-    SettingsRoute.name: (routeData) {
+    ProfilePageRoute.name: (routeData) {
+      final args = routeData.argsAs<ProfilePageRouteArgs>();
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i9.SettingsPage(),
+        child: _i8.ProfilePage(
+          key: args.key,
+          user: args.user,
+        ),
       );
     },
-    UnivhexPageRoute.name: (routeData) {
+    LoginPageRoute.name: (routeData) {
+      final args = routeData.argsAs<LoginPageRouteArgs>(
+          orElse: () => const LoginPageRouteArgs());
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i10.UnivhexPage(),
+        child: _i9.LoginScreen(
+          key: args.key,
+          email: args.email,
+        ),
       );
     },
-    AppRoute.name: (routeData) {
+    UserPageRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i11.AppRouterPage(),
+        child: const _i10.UserPage(),
       );
     },
     AuthRoute.name: (routeData) {
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i12.AuthRouterPage(),
+        child: const _i11.AuthRouterPage(),
+      );
+    },
+    AppRoute.name: (routeData) {
+      return _i13.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i12.AppRouterPage(),
       );
     },
   };
 }
 
 /// generated route for
-/// [_i1.DiscoverPage]
-class DiscoverPageRoute extends _i13.PageRouteInfo<void> {
-  const DiscoverPageRoute({List<_i13.PageRouteInfo>? children})
+/// [_i1.SettingsPage]
+class SettingsRoute extends _i13.PageRouteInfo<void> {
+  const SettingsRoute({List<_i13.PageRouteInfo>? children})
       : super(
-          DiscoverPageRoute.name,
+          SettingsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'DiscoverPageRoute';
+  static const String name = 'SettingsRoute';
 
   static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i2.HomePage]
-class HomePageRoute extends _i13.PageRouteInfo<void> {
-  const HomePageRoute({List<_i13.PageRouteInfo>? children})
-      : super(
-          HomePageRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'HomePageRoute';
-
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i3.PostDetail]
+/// [_i2.PostDetail]
 class PostDetailRoute extends _i13.PageRouteInfo<PostDetailRouteArgs> {
   PostDetailRoute({
     _i14.Key? key,
     required _i15.UnivhexPost post,
     required bool autoFocus,
+    required void Function()? refreshHome,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           PostDetailRoute.name,
@@ -170,6 +158,7 @@ class PostDetailRoute extends _i13.PageRouteInfo<PostDetailRouteArgs> {
             key: key,
             post: post,
             autoFocus: autoFocus,
+            refreshHome: refreshHome,
           ),
           initialChildren: children,
         );
@@ -185,6 +174,7 @@ class PostDetailRouteArgs {
     this.key,
     required this.post,
     required this.autoFocus,
+    required this.refreshHome,
   });
 
   final _i14.Key? key;
@@ -193,104 +183,58 @@ class PostDetailRouteArgs {
 
   final bool autoFocus;
 
+  final void Function()? refreshHome;
+
   @override
   String toString() {
-    return 'PostDetailRouteArgs{key: $key, post: $post, autoFocus: $autoFocus}';
+    return 'PostDetailRouteArgs{key: $key, post: $post, autoFocus: $autoFocus, refreshHome: $refreshHome}';
   }
 }
 
 /// generated route for
-/// [_i4.LoginScreen]
-class LoginPageRoute extends _i13.PageRouteInfo<LoginPageRouteArgs> {
-  LoginPageRoute({
-    _i14.Key? key,
-    String? email,
-    List<_i13.PageRouteInfo>? children,
-  }) : super(
-          LoginPageRoute.name,
-          args: LoginPageRouteArgs(
-            key: key,
-            email: email,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'LoginPageRoute';
-
-  static const _i13.PageInfo<LoginPageRouteArgs> page =
-      _i13.PageInfo<LoginPageRouteArgs>(name);
-}
-
-class LoginPageRouteArgs {
-  const LoginPageRouteArgs({
-    this.key,
-    this.email,
-  });
-
-  final _i14.Key? key;
-
-  final String? email;
-
-  @override
-  String toString() {
-    return 'LoginPageRouteArgs{key: $key, email: $email}';
-  }
-}
-
-/// generated route for
-/// [_i5.UserPage]
-class UserPageRoute extends _i13.PageRouteInfo<void> {
-  const UserPageRoute({List<_i13.PageRouteInfo>? children})
+/// [_i3.HomePage]
+class HomePageRoute extends _i13.PageRouteInfo<void> {
+  const HomePageRoute({List<_i13.PageRouteInfo>? children})
       : super(
-          UserPageRoute.name,
+          HomePageRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'UserPageRoute';
+  static const String name = 'HomePageRoute';
 
   static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i6.ProfilePage]
-class ProfilePageRoute extends _i13.PageRouteInfo<ProfilePageRouteArgs> {
-  ProfilePageRoute({
-    _i14.Key? key,
-    required _i16.AppUser? user,
-    List<_i13.PageRouteInfo>? children,
-  }) : super(
-          ProfilePageRoute.name,
-          args: ProfilePageRouteArgs(
-            key: key,
-            user: user,
-          ),
+/// [_i4.DiscoverPage]
+class DiscoverPageRoute extends _i13.PageRouteInfo<void> {
+  const DiscoverPageRoute({List<_i13.PageRouteInfo>? children})
+      : super(
+          DiscoverPageRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'ProfilePageRoute';
+  static const String name = 'DiscoverPageRoute';
 
-  static const _i13.PageInfo<ProfilePageRouteArgs> page =
-      _i13.PageInfo<ProfilePageRouteArgs>(name);
-}
-
-class ProfilePageRouteArgs {
-  const ProfilePageRouteArgs({
-    this.key,
-    required this.user,
-  });
-
-  final _i14.Key? key;
-
-  final _i16.AppUser? user;
-
-  @override
-  String toString() {
-    return 'ProfilePageRouteArgs{key: $key, user: $user}';
-  }
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i7.Register]
+/// [_i5.UnivhexPage]
+class UnivhexPageRoute extends _i13.PageRouteInfo<void> {
+  const UnivhexPageRoute({List<_i13.PageRouteInfo>? children})
+      : super(
+          UnivhexPageRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UnivhexPageRoute';
+
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i6.Register]
 class RegisterPageRoute extends _i13.PageRouteInfo<void> {
   const RegisterPageRoute({List<_i13.PageRouteInfo>? children})
       : super(
@@ -304,7 +248,7 @@ class RegisterPageRoute extends _i13.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i8.RegisterContinue]
+/// [_i7.RegisterContinue]
 class RegisterContinueRoute
     extends _i13.PageRouteInfo<RegisterContinueRouteArgs> {
   RegisterContinueRoute({
@@ -358,49 +302,97 @@ class RegisterContinueRouteArgs {
 }
 
 /// generated route for
-/// [_i9.SettingsPage]
-class SettingsRoute extends _i13.PageRouteInfo<void> {
-  const SettingsRoute({List<_i13.PageRouteInfo>? children})
-      : super(
-          SettingsRoute.name,
+/// [_i8.ProfilePage]
+class ProfilePageRoute extends _i13.PageRouteInfo<ProfilePageRouteArgs> {
+  ProfilePageRoute({
+    _i14.Key? key,
+    required _i16.AppUser? user,
+    List<_i13.PageRouteInfo>? children,
+  }) : super(
+          ProfilePageRoute.name,
+          args: ProfilePageRouteArgs(
+            key: key,
+            user: user,
+          ),
           initialChildren: children,
         );
 
-  static const String name = 'SettingsRoute';
+  static const String name = 'ProfilePageRoute';
+
+  static const _i13.PageInfo<ProfilePageRouteArgs> page =
+      _i13.PageInfo<ProfilePageRouteArgs>(name);
+}
+
+class ProfilePageRouteArgs {
+  const ProfilePageRouteArgs({
+    this.key,
+    required this.user,
+  });
+
+  final _i14.Key? key;
+
+  final _i16.AppUser? user;
+
+  @override
+  String toString() {
+    return 'ProfilePageRouteArgs{key: $key, user: $user}';
+  }
+}
+
+/// generated route for
+/// [_i9.LoginScreen]
+class LoginPageRoute extends _i13.PageRouteInfo<LoginPageRouteArgs> {
+  LoginPageRoute({
+    _i14.Key? key,
+    String? email,
+    List<_i13.PageRouteInfo>? children,
+  }) : super(
+          LoginPageRoute.name,
+          args: LoginPageRouteArgs(
+            key: key,
+            email: email,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginPageRoute';
+
+  static const _i13.PageInfo<LoginPageRouteArgs> page =
+      _i13.PageInfo<LoginPageRouteArgs>(name);
+}
+
+class LoginPageRouteArgs {
+  const LoginPageRouteArgs({
+    this.key,
+    this.email,
+  });
+
+  final _i14.Key? key;
+
+  final String? email;
+
+  @override
+  String toString() {
+    return 'LoginPageRouteArgs{key: $key, email: $email}';
+  }
+}
+
+/// generated route for
+/// [_i10.UserPage]
+class UserPageRoute extends _i13.PageRouteInfo<void> {
+  const UserPageRoute({List<_i13.PageRouteInfo>? children})
+      : super(
+          UserPageRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UserPageRoute';
 
   static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i10.UnivhexPage]
-class UnivhexPageRoute extends _i13.PageRouteInfo<void> {
-  const UnivhexPageRoute({List<_i13.PageRouteInfo>? children})
-      : super(
-          UnivhexPageRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'UnivhexPageRoute';
-
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i11.AppRouterPage]
-class AppRoute extends _i13.PageRouteInfo<void> {
-  const AppRoute({List<_i13.PageRouteInfo>? children})
-      : super(
-          AppRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'AppRoute';
-
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i12.AuthRouterPage]
+/// [_i11.AuthRouterPage]
 class AuthRoute extends _i13.PageRouteInfo<void> {
   const AuthRoute({List<_i13.PageRouteInfo>? children})
       : super(
@@ -409,6 +401,20 @@ class AuthRoute extends _i13.PageRouteInfo<void> {
         );
 
   static const String name = 'AuthRoute';
+
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i12.AppRouterPage]
+class AppRoute extends _i13.PageRouteInfo<void> {
+  const AppRoute({List<_i13.PageRouteInfo>? children})
+      : super(
+          AppRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AppRoute';
 
   static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }

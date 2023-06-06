@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:univhex/Constants/AppColors.dart';
 
 import '../../Constants/current_user.dart';
 import '../../Firebase/firestore.dart';
@@ -26,7 +27,7 @@ class UnivhexAddPostWidget extends HookWidget {
     final isAnonymous = useState(false);
     final pickedImage = useState<XFile?>(null);
     final imageUrl = useState<String?>(null);
-
+    final isUploading = useState<bool>(false);
     return Column(
       children: [
         const Divider(
@@ -37,11 +38,10 @@ class UnivhexAddPostWidget extends HookWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Row(
             children: [
-              Expanded(child: _buildTextField(textController)),
+              Expanded(child: _buildTextField(textController, pickedImage)),
               const SizedBox(width: 10),
-              _buildPickImg(pickedImage),
-              _buildSendPost(
-                  isAnonymous, textController, pickedImage, imageUrl),
+              _buildSendPost(isAnonymous, textController, pickedImage, imageUrl,
+                  isUploading),
             ],
           ),
         ),
@@ -88,38 +88,54 @@ class UnivhexAddPostWidget extends HookWidget {
     TextEditingController textController,
     ValueNotifier<XFile?> pickedImage,
     ValueNotifier<String?> imageUrl,
+    ValueNotifier<bool> isUploading,
   ) =>
       IconButton(
-        onPressed: () async {
-          String? imgUrl;
+        onPressed: !isUploading.value
+            ? () async {
+                String? imgUrl;
+                isUploading.value = true;
+                await uploadImgToFire(pickedImage)
+                    .then((value) => imgUrl = value);
 
-          await uploadImgToFire(pickedImage).then((value) => imgUrl = value);
+                final newPost = UnivhexPost(
+                  id: "",
+                  authorId: CurrentUser.user!.id,
+                  university: CurrentUser.user!.university!,
+                  textContent: textController.text,
+                  isAnonymous: isAnonymous.value,
+                  dateTime: DateTime.now(),
+                  hexedBy: [],
+                  hexCount: 0,
+                  comments: [],
+                  media: imgUrl,
+                );
 
-          final newPost = UnivhexPost(
-            id: "",
-            authorId: CurrentUser.user!.id,
-            university: CurrentUser.user!.university!,
-            textContent: textController.text,
-            isAnonymous: isAnonymous.value,
-            dateTime: DateTime.now(),
-            hexedBy: [],
-            hexCount: 0,
-            comments: [],
-            media: imgUrl,
-          );
+                if (await addNewPostDB(newPost)) {
+                  debugPrint("Post successfully added to Database!");
+                  isUploading.value = false;
+                }
 
-          if (await addNewPostDB(newPost)) {
-            debugPrint("Post successfully added to Database!");
-          }
+                isAnonymous.value = false;
+                textController.clear();
+                pickedImage.value = null;
+                imageUrl.value = null;
 
-          isAnonymous.value = false;
-          textController.clear();
-          pickedImage.value = null;
-          imageUrl.value = null;
-
-          onPressed();
-        },
-        icon: const Icon(Icons.send),
+                onPressed();
+              }
+            : () {},
+        icon: !isUploading.value
+            ? const Icon(
+                Icons.send_outlined,
+                color: AppColors.myPurple,
+              )
+            : const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: AppColors.myPurple,
+                  backgroundColor: AppColors.myLightBlue,
+                )),
       );
 
   /// Uploads an image to Firebase Storage.
@@ -146,16 +162,31 @@ class UnivhexAddPostWidget extends HookWidget {
             pickedImage.value = image;
           }
         },
-        icon: const Icon(Icons.add_a_photo),
+        icon: const Icon(
+          Icons.add_a_photo_outlined,
+          color: AppColors.myBlue,
+        ),
       );
 
   /// Builds a [TextField] with the given [textController].
-  Widget _buildTextField(TextEditingController textController) => TextField(
-        controller: textController,
-        decoration: const InputDecoration(
-          hintText: "What's on your mind?",
-          border: InputBorder.none,
-        ),
+  Widget _buildTextField(TextEditingController textController,
+          ValueNotifier<XFile?> pickedImage) =>
+      Column(
+        children: [
+          TextField(
+            controller: textController,
+            minLines: 1,
+            maxLines: 4,
+            decoration: const InputDecoration(
+              hintText: "What's on your mind?",
+              border: InputBorder.none,
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _buildPickImg(pickedImage),
+          ),
+        ],
       );
 
   /// Builds a [Switch] widget.
@@ -166,6 +197,8 @@ class UnivhexAddPostWidget extends HookWidget {
   Widget _buildSwitch(ValueNotifier<bool> isAnonymous) => Align(
         alignment: Alignment.centerLeft,
         child: SwitchListTile(
+          activeColor: AppColors.myLightBlue,
+          inactiveThumbColor: AppColors.myPurple,
           dense: true,
           title: const Text("Anonymous"),
           value: isAnonymous.value,

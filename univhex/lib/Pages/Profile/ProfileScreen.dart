@@ -34,13 +34,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> selectProfilePicture(bool delete) async {
     late String imgURL;
+    XFile? pickedFile;
     if (delete) {
       imgURL = "assets/images/icon.png";
     }
 
     if (!delete) {
       final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         // Use the picked image file for further processing (e.g., upload to Firebase Storage)
@@ -54,10 +55,12 @@ class _ProfilePageState extends State<ProfilePage> {
         imgURL = await uploadProfilePicture(widget.user!.id!, imageFile.path);
       }
     }
-    setState(() {
-      saveProfilePictureUrl(widget.user!.id!, imgURL);
-      _isUploading = false;
-    });
+    if (pickedFile != null) {
+      setState(() {
+        saveProfilePictureUrl(widget.user!.id!, imgURL);
+        _isUploading = false;
+      });
+    }
   }
 
   @override
@@ -168,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           CurrentUser.addVerticalSpace(1),
                           Text(
-                            "${widget.user!.name} ${widget.user!.surname}",
+                            "${widget.user!.camelAttr(widget.user!.name!)} ${widget.user!.camelAttr(widget.user!.surname!)}",
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineSmall!
@@ -199,7 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: CurrentUser.addVerticalSpace(1.2),
               ),
               SliverToBoxAdapter(
-                child: ProfileTabBar(userId: widget.user!.id!),
+                child: ProfileTabBar(user: widget.user!),
               ),
             ],
           ),
@@ -210,8 +213,8 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class ProfileTabBar extends StatefulWidget {
-  const ProfileTabBar({super.key, required this.userId});
-  final String userId;
+  const ProfileTabBar({super.key, required this.user});
+  final AppUser user;
   @override
   State<ProfileTabBar> createState() => _ProfileTabBarState();
 }
@@ -222,7 +225,7 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
     return DefaultTabController(
       length: 2,
       child: Container(
-        height: CurrentUser.deviceHeight! * 0.46,
+        height: CurrentUser.deviceHeight! * 0.48, // Burayı düzeltmek lazım
         child: Column(
           children: [
             TabBar(
@@ -235,8 +238,8 @@ class _ProfileTabBarState extends State<ProfileTabBar> {
             Expanded(
               child: TabBarView(
                 children: [
-                  UserPostList(userId: widget.userId),
-                  const UserInformation(),
+                  UserPostList(userId: widget.user.id!),
+                  UserInformation(user: widget.user),
                 ],
               ),
             ),
@@ -251,12 +254,13 @@ class UserInformation extends StatelessWidget {
   // This is the personal information view which is found in profile's '?'. Edit as you like --> (Cagla Köse)
   const UserInformation({
     Key? key,
+    required this.user,
   }) : super(key: key);
-
+  final AppUser user;
   @override
   Widget build(BuildContext context) {
     Map<int, String> gradeMap = {1: 'st', 2: 'nd', 3: 'rd', 4: "th"};
-    int grade = int.parse(CurrentUser.user!.yearOfStudy!);
+    int grade = int.parse(user.yearOfStudy!);
     String year = gradeMap[grade]!;
 
     return Padding(
@@ -267,26 +271,25 @@ class UserInformation extends StatelessWidget {
           CurrentUser.addVerticalSpace(2),
           Center(
               child: Text(
-            CurrentUser.user!.university!,
+            user.university!.toUpperCase(),
             style: Theme.of(context)
                 .textTheme
                 .headlineSmall!
                 .copyWith(color: AppColors.obsidianInvert),
           )),
-          CurrentUser.addVerticalSpace(2),
-          CurrentUser.addVerticalSpace(2),
+          CurrentUser.addVerticalSpace(4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                CurrentUser.user!.fieldOfStudy!,
+                user.camelAttr(user.fieldOfStudy!),
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
                     .copyWith(color: AppColors.obsidianInvert),
               ),
               Text(
-                "${CurrentUser.user!.yearOfStudy!}$year Grade",
+                "${user.yearOfStudy!}$year Grade",
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: AppColors.obsidianInvert,
                     ),
@@ -322,11 +325,9 @@ class _UserPostListState extends State<UserPostList> {
           return Center(child: Text("Error Occurred ${snapshot.error}"));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const SizedBox();
         } else {
           List<UnivhexPost> dataList = snapshot.data ?? [];
-
-          // UnivhexPost currentPost = dataList[index];
           return dataList.isNotEmpty
               ? ListView.builder(
                   itemCount: dataList.length,
@@ -336,7 +337,6 @@ class _UserPostListState extends State<UserPostList> {
                       children: [
                         UnivhexPostWidget(
                           post: currentPost,
-                          height: 0,
                         ),
                         PostInteractionBar(post: currentPost),
                         const Divider(

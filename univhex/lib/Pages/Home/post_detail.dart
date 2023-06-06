@@ -11,9 +11,14 @@ import '../../Objects/comment_widget.dart';
 
 @RoutePage(name: "PostDetailRoute")
 class PostDetail extends StatefulWidget {
-  const PostDetail({super.key, required this.post, required this.autoFocus});
+  PostDetail(
+      {super.key,
+      required this.post,
+      required this.autoFocus,
+      required this.refreshHome});
   final UnivhexPost post;
   final bool autoFocus;
+  VoidCallback? refreshHome;
   @override
   State<PostDetail> createState() => _PostDetailState();
 }
@@ -36,7 +41,11 @@ class _PostDetailState extends State<PostDetail> {
     debugPrint("This widget was built!");
 
     return WillPopScope(
-      onWillPop: _onBackPressed,
+      onWillPop: () {
+        widget.refreshHome;
+        ;
+        return _onBackPressed();
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Post Flood"),
@@ -46,14 +55,13 @@ class _PostDetailState extends State<PostDetail> {
             GestureDetector(
               onDoubleTap: () {
                 setState(() {
-                  if (!widget.post.hexedBy.contains(CurrentUser.user!.email)) {
+                  if (!widget.post.hexedBy.contains(CurrentUser.user!.id)) {
                     widget.post.addLike();
                   }
                 });
               },
               child: UnivhexPostWidget(
                 post: widget.post,
-                height: CurrentUser.deviceHeight! * 0.05,
               ),
             ),
             const Divider(
@@ -149,6 +157,7 @@ Future<bool> _onBackPressed() {
   // Set your variable to false here
   CurrentUser.inPost = false;
   debugPrint("Back pressed: in post?: ${CurrentUser.inPost}");
+
   // Return true to allow the back button to pop the current screen
   return Future.value(true);
 }
