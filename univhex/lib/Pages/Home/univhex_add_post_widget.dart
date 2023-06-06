@@ -1,240 +1,175 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:auto_size_text_field/auto_size_text_field.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:univhex/Constants/AppColors.dart';
-import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Firebase/firestore.dart';
-import 'package:univhex/Objects/univhex_post.dart';
-import 'package:univhex/Router/app_router.dart';
-import '../../Objects/app_user.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:image_picker/image_picker.dart';
 
-class AddPostWidget extends StatefulWidget {
-  const AddPostWidget({super.key, required this.callback});
-  final Future<void> Function() callback;
-  @override
-  State<AddPostWidget> createState() => _AddPostWidgetState();
-}
+import '../../Constants/current_user.dart';
+import '../../Firebase/firestore.dart';
+import '../../Objects/univhex_post.dart';
 
-class _AddPostWidgetState extends State<AddPostWidget> {
-  final TextEditingController controller = TextEditingController();
-  bool isAnonymous = false; // Set this flag to true for anonymous posts
-  late ImageProvider<Object> _avatarImageProvider;
-  void _loadAvatarImage() {
-    if (isAnonymous) {
-      _avatarImageProvider = AssetImage('assets/images/launcher_icon.png');
-    } else {
-      if (CurrentUser.user!.imgUrl == "assets/images/icon.png") {
-        _avatarImageProvider = AssetImage("assets/images/icon.png");
-      } else {
-        _avatarImageProvider = NetworkImage(CurrentUser.user!.imgUrl!);
-      }
-    }
-  }
+class UnivhexAddPostWidget extends HookWidget {
+  UnivhexAddPostWidget({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final VoidCallback onPressed;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
-    _loadAvatarImage();
-    return SizedBox(
-      height: CurrentUser.deviceHeight! * 0.2,
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 8.0),
-            child: Divider(
-              height: 0.2,
-              color: AppColors.obsidianInvert,
-              thickness: 0.5,
-            ),
-          ),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, top: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.myLightBlue,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: _avatarImageProvider,
-                        ),
-                      ),
-                    ),
-                    Switch(
-                      // This bool value toggles the switch.
-                      value: isAnonymous,
-                      activeColor: AppColors.myLightBlue,
-                      inactiveThumbColor: AppColors.myPurple,
-                      onChanged: (bool value) {
-                        // This is called when the user toggles the switch.
-                        setState(() {
-                          isAnonymous = value;
-                          _loadAvatarImage();
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                PostTextArea(
-                  controller: controller,
-                ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: PostButton(
-                    callbackFunction: widget.callback,
-                    controller: controller,
-                    isAnonymous: isAnonymous,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(
-            color: AppColors.myPink,
-            thickness: 0.5,
-          ),
-        ],
-      ),
-    );
-  }
-}
+    final textController = useTextEditingController();
+    final isAnonymous = useState(false);
+    final pickedImage = useState<XFile?>(null);
+    final imageUrl = useState<String?>(null);
 
-class PostButton extends StatefulWidget {
-  const PostButton({
-    super.key,
-    required this.callbackFunction,
-    required this.controller,
-    required this.isAnonymous,
-  });
-  final Future<void> Function() callbackFunction;
-  final TextEditingController controller;
-  final bool isAnonymous;
-  // Needed for univhex Post
-
-  @override
-  State<PostButton> createState() => _PostButtonState();
-}
-
-class _PostButtonState extends State<PostButton> {
-  bool isPosting = false;
-
-  void handlePostButtonPressed() {
-    if (widget.controller.text.trim().isEmpty) {
-      return;
-    }
-    setState(() {
-      isPosting = true;
-    });
-
-    Future.delayed(const Duration(seconds: 1), () {
-      _performPostOperation(widget.isAnonymous).then((_) {
-        setState(() {
-          isPosting = false;
-        });
-        widget.callbackFunction();
-        widget.controller.clear();
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return !isPosting
-        ? IconButton(
-            iconSize: 28,
-            color:
-                widget.isAnonymous ? AppColors.myLightBlue : AppColors.myPurple,
-            icon: const Icon(Icons.send_rounded),
-            style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    widget.isAnonymous ? AppColors.myBlue : AppColors.myPurple,
-                disabledBackgroundColor: AppColors.myAqua.withAlpha(1)),
-            onPressed: isPosting ? null : handlePostButtonPressed,
-          )
-        : const Padding(
-            padding: EdgeInsets.only(right: 20.0, bottom: 12),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                    color: AppColors.myPurple,
-                    backgroundColor: AppColors.myLightBlue),
-              ),
-            ),
-          ); // Show the progress indicator when isPosting is true
-  }
-
-  _performPostOperation(bool isAnonymous) async {
-    DateTime dateTime = DateTime.now();
-
-    UnivhexPost newPost = UnivhexPost(
-      id: "",
-      authorId: CurrentUser.user!.id,
-      university: CurrentUser.user!.university!,
-      textContent: widget.controller.text,
-      isAnonymous: isAnonymous,
-      dateTime: dateTime,
-      hexedBy: [],
-      hexCount: 0,
-      comments: [],
-    );
-
-    if (await addNewPostDB(newPost)) {
-      debugPrint("Post successfully added to Database!");
-    }
-  }
-}
-
-class PostTextArea extends StatefulWidget {
-  const PostTextArea({
-    super.key,
-    required this.controller,
-  });
-
-  final TextEditingController controller;
-  @override
-  State<PostTextArea> createState() => _PostTextAreaState();
-}
-
-class _PostTextAreaState extends State<PostTextArea> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: GestureDetector(
-          onTap: () {
-            debugPrint("statement");
-          },
-          child: TextField(
-            minLines: 6,
-            maxLines: null,
-            autocorrect: false,
-            decoration: const InputDecoration(
-                border: InputBorder.none, hintText: "What is happening?!"),
-            keyboardType: TextInputType.name,
-            controller: widget.controller,
-            onChanged: (text) {
-              debugPrint(widget.controller.text);
-            },
+    return Column(
+      children: [
+        const Divider(
+          height: 0,
+          thickness: 1,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Row(
+            children: [
+              Expanded(child: _buildTextField(textController)),
+              const SizedBox(width: 10),
+              _buildPickImg(pickedImage),
+              _buildSendPost(
+                  isAnonymous, textController, pickedImage, imageUrl),
+            ],
           ),
         ),
-      ),
+        _buildSwitch(isAnonymous),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: pickedImage.value != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.file(
+                          File(pickedImage.value!.path),
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : const SizedBox(),
+              ),
+            ),
+          ],
+        ),
+        const Divider(),
+      ],
     );
   }
+
+  /// Picks an image from the gallery.
+  Future<XFile?> _pickImage() => _picker.pickImage(source: ImageSource.gallery);
+
+  Future<String?> uploadImgToFire(
+    ValueNotifier<XFile?> pickedImage,
+  ) async {
+    if (pickedImage.value != null) {
+      String url = await uploadImageToFirebase(pickedImage.value!);
+      return url;
+    }
+    return null;
+  }
+
+  /// Builds a [IconButton] to send the post.
+  Widget _buildSendPost(
+    ValueNotifier<bool> isAnonymous,
+    TextEditingController textController,
+    ValueNotifier<XFile?> pickedImage,
+    ValueNotifier<String?> imageUrl,
+  ) =>
+      IconButton(
+        onPressed: () async {
+          String? imgUrl;
+
+          await uploadImgToFire(pickedImage).then((value) => imgUrl = value);
+
+          final newPost = UnivhexPost(
+            id: "",
+            authorId: CurrentUser.user!.id,
+            university: CurrentUser.user!.university!,
+            textContent: textController.text,
+            isAnonymous: isAnonymous.value,
+            dateTime: DateTime.now(),
+            hexedBy: [],
+            hexCount: 0,
+            comments: [],
+            media: imgUrl,
+          );
+
+          if (await addNewPostDB(newPost)) {
+            debugPrint("Post successfully added to Database!");
+          }
+
+          isAnonymous.value = false;
+          textController.clear();
+          pickedImage.value = null;
+          imageUrl.value = null;
+
+          onPressed();
+        },
+        icon: const Icon(Icons.send),
+      );
+
+  /// Uploads an image to Firebase Storage.
+  Future<String> uploadImageToFirebase(XFile imageFile) async {
+    File file = File(imageFile.path);
+    try {
+      String filePath = 'images/${DateTime.now()}.png';
+      await FirebaseStorage.instance.ref(filePath).putFile(file);
+
+      String downloadURL =
+          await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+      return downloadURL;
+    } on FirebaseException catch (e) {
+      print(e);
+      return '';
+    }
+  }
+
+  /// Builds an [IconButton] to pick an image.
+  Widget _buildPickImg(ValueNotifier<XFile?> pickedImage) => IconButton(
+        onPressed: () async {
+          final XFile? image = await _pickImage();
+          if (image != null) {
+            pickedImage.value = image;
+          }
+        },
+        icon: const Icon(Icons.add_a_photo),
+      );
+
+  /// Builds a [TextField] with the given [textController].
+  Widget _buildTextField(TextEditingController textController) => TextField(
+        controller: textController,
+        decoration: const InputDecoration(
+          hintText: "What's on your mind?",
+          border: InputBorder.none,
+        ),
+      );
+
+  /// Builds a [Switch] widget.
+  ///
+  /// This function builds a [Switch] widget using the given [isAnonymous]
+  /// [ValueNotifier] to determine the value of the switch and the given
+  /// [onChanged] callback to handle user input.
+  Widget _buildSwitch(ValueNotifier<bool> isAnonymous) => Align(
+        alignment: Alignment.centerLeft,
+        child: SwitchListTile(
+          dense: true,
+          title: const Text("Anonymous"),
+          value: isAnonymous.value,
+          onChanged: (value) => isAnonymous.value = value,
+        ),
+      );
 }

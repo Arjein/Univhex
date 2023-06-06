@@ -11,14 +11,8 @@ import 'package:univhex/Router/router_observer.dart';
 import 'package:univhex/Router/router_singleton.dart';
 import 'package:univhex/Theme/theme_constants.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'Router/app_router.gr.dart';
 import 'firebase_options.dart';
-/* TODO
-  - HomePage buildlerken resim değişmiyo. listviewin rebuilt etmesi gerekiyor. farklı fotoğraf yükleyip post atarsak problemi anlarız.
-  - Detail'den homea dönerken setState cakmiyor like butonu Sıkıntı.
-  - AddPost widgetında klavye problemi va. Gitmiyor klavye.
-  - Yorum butonu direk keyboardı accak
-
-*/
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,18 +25,16 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   AppUser? user;
-  //await UserSecureStorage.deleteStorage();
+  // await UserSecureStorage.deleteStorage();
   String? email = await UserSecureStorage.getEmail();
   String? password = await UserSecureStorage.getPassword();
   bool isLogged = await authUser(email, password);
   debugPrint("Is Logged: $isLogged");
 
   if (isLogged) {
-    String? userid = await UserSecureStorage.getFirebaseUID();
-    debugPrint(userid);
-    user = await readUserfromDB(userid);
+    user = await readUserfromDB(await UserSecureStorage.getFirebaseUID());
     CurrentUser.user = user;
-    debugPrint("Fetched user:" + user.toString());
+    debugPrint("Fetched user:$user");
     runApp(
       InitApp(isLogged: isLogged, user: CurrentUser.user!),
     );
@@ -72,8 +64,8 @@ class MyApp extends StatelessWidget {
       routerDelegate: getIt<AppRouter>().delegate(
           navigatorObservers: _createObservers,
           initialRoutes: [
-            if (isLogged) UserPageRoute(),
-            if (!isLogged) AuthRoute()
+            if (isLogged) const AppRoute(),
+            if (!isLogged) const AuthRoute()
           ]),
       routeInformationParser: getIt<AppRouter>().defaultRouteParser(),
     );

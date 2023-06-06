@@ -1,18 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Router/app_router.gr.dart';
 
 import '../Constants/AppColors.dart';
-import '../Router/app_router.dart';
 import 'app_user.dart';
 
 class UnivhexPostWidget extends StatefulWidget {
   const UnivhexPostWidget({
-    Key? key,
+    super.key,
     required this.post,
     required this.height,
   });
@@ -29,7 +27,6 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _authorFuture = retrieveAuthor();
     super.initState();
   }
@@ -80,7 +77,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                     ),
                   );
                 }
-              },
+              }, //
               child: Container(
                 padding: const EdgeInsets.all(16),
                 color: AppColors.bgColor,
@@ -89,8 +86,7 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (author.id != CurrentUser.user!.id &&
-                            !widget.post.isAnonymous) {
+                        if (author.email != CurrentUser.user!.email) {
                           context.router.push(ProfilePageRoute(user: author));
                         } else {
                           debugPrint("Same Person");
@@ -125,14 +121,23 @@ class _UnivhexPostWidgetState extends State<UnivhexPostWidget> {
                               child: Text(
                                 DateFormat('HH:mm . d, MMMM')
                                     .format(widget.post.dateTime),
-                                style:
-                                    TextStyle(color: AppColors.obsidianInvert),
+                                style: const TextStyle(
+                                    color: AppColors.obsidianInvert),
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
+                    CurrentUser.addVerticalSpace(2),
+                    if (widget.post.media != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          widget.post.media!,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Align(

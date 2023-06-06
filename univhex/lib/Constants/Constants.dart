@@ -1,5 +1,3 @@
-import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Objects/univhex_post.dart';
 
 class Constants {
   static const List<String> schools = <String>[

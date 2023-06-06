@@ -1,25 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
-import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Pages/Home/post_detail.dart';
-import 'package:univhex/Objects/univhex_post.dart';
-import 'package:univhex/Pages/Discover/discover_page.dart';
-import 'package:univhex/Pages/Register/Register.dart';
-import 'package:univhex/Pages/Register/RegisterContinue.dart';
-import 'package:univhex/Pages/Settings/settings.dart';
-import 'package:univhex/Pages/Univhex/univhex_screen.dart';
-import 'package:univhex/Pages/page_navigator.dart';
 
-import '../Pages/Home/home_screen.dart';
-import '../Pages/Login/login_screen.dart';
-import '../Pages/Profile/ProfileScreen.dart';
-import 'empty_router_pages/app_router_empty.dart';
-import 'empty_router_pages/auth_router_empty.dart';
-
-part 'app_router.gr.dart';
+import 'app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
-class AppRouter extends _$AppRouter {
+class AppRouter extends $AppRouter {
+  @override
   RouteType get defaultRouteType => const RouteType.adaptive();
 
   @override
@@ -47,10 +32,6 @@ class AppRouter extends _$AppRouter {
         ),
 
         AutoRoute(
-          path: "/post-detail",
-          page: PostDetailRoute.page,
-        ),
-        AutoRoute(
           path: '/',
           page: AppRoute.page,
           children: [
@@ -76,6 +57,10 @@ class AppRouter extends _$AppRouter {
                   page: UnivhexPageRoute.page,
                 ),
               ],
+            ),
+            AutoRoute(
+              path: "post-detail",
+              page: PostDetailRoute.page,
             ),
             AutoRoute(path: "settings", page: SettingsRoute.page)
           ],

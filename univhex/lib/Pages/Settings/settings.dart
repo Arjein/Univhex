@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
-import 'package:univhex/Router/app_router.dart';
+import 'package:univhex/Router/app_router.gr.dart';
 
 @RoutePage()
 class SettingsPage extends StatelessWidget {
@@ -15,15 +15,12 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           children: [
             ElevatedButton(
-              onPressed: () async{
+              onPressed: () async {
                 if (await UserSecureStorage.deleteStorage()) {
-                  context.router.replaceAll([AuthRoute()]);
+                  context.router.replaceAll([const AuthRoute()]);
                 }
-                
-                
               },
-
-              child: Text("Log Out"),
+              child: const Text("Log Out"),
             )
           ],
         ),

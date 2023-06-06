@@ -8,10 +8,11 @@ import 'package:univhex/Objects/post_interaction_bar.dart';
 import 'package:univhex/Pages/Home/univhex_add_post_widget.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
+import 'package:lottie/lottie.dart';
 
 @RoutePage(name: 'HomePageRoute')
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -38,8 +39,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: Container(
-            padding: EdgeInsets.only(left: 13),
-            child: Image.asset("assets/images/icon.png")),
+          padding: const EdgeInsets.only(left: 13),
+          child: Lottie.network(
+              'https://assets9.lottiefiles.com/packages/lf20_d6619szt.json'),
+        ),
         title: Text(CurrentUser.user!.university!.toString()),
       ),
       body: RefreshIndicator(
@@ -65,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                         )
                       : SliverToBoxAdapter(child: Container()),
                   SliverToBoxAdapter(
-                    child: AddPostWidget(callback: _refreshFeed),
+                    child: UnivhexAddPostWidget(onPressed: _refreshFeed),
                   ),
                   // Show the posts if there are any, or an empty widget
 
@@ -104,9 +107,6 @@ class _HomePageState extends State<HomePage> {
                         childCount: dataList.length,
                       ),
                     ),
-                  // Show the circular progress indicator only during refresh
-
-                  // Show the AddPostWidget regardless of refresh state
                 ],
               );
             }

@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Objects/app_comment.dart';
@@ -15,6 +17,7 @@ class UnivhexPost {
   int hexCount;
   final List<dynamic> comments;
   final String university;
+  final String? media;
 
   UnivhexPost({
     required this.id,
@@ -26,6 +29,7 @@ class UnivhexPost {
     required this.hexCount,
     required this.comments,
     required this.university,
+    this.media,
   });
 
   Future<AppUser> retrieveAuthor() async {
@@ -49,6 +53,7 @@ class UnivhexPost {
       hexedBy: jsonData["HexedBy"],
       hexCount: jsonData["HexCount"],
       comments: jsonData["Comments"],
+      media: jsonData["Media"],
     );
 
     return fetchedPost;
@@ -93,19 +98,19 @@ class UnivhexPost {
     return {
       "id": id,
       "AuthorId": authorId,
-      "University": university.toLowerCase(),
+      "University": university,
       "TextContent": textContent,
       "isAnonymous": isAnonymous,
       "Datetime": dateTime,
       "HexedBy": hexedBy,
       "HexCount": hexCount,
       "Comments": comments,
+      "Media": media,
     };
   }
 
   @override
   String toString() {
-    // TODO: implement toString
     return "Posted By: ${authorId.toString()}, at ${dateTime.toString()}";
   }
 }
