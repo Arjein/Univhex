@@ -1,67 +1,63 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Pages/Home/home_screen.dart';
-import 'package:univhex/Pages/Profile/ProfileScreen.dart';
-import 'package:univhex/Widgets/appBottomNavBar.dart';
+import 'package:univhex/Router/app_router.gr.dart';
 
-class UserPage extends StatefulWidget {
-  final AppUser user;
-  const UserPage({Key? key, required this.user}) : super(key: key);
-
-  @override
-  State<UserPage> createState() => _UserPageState();
-}
-
-class _UserPageState extends State<UserPage> {
-  late final List<Widget> _widgetOptions;
-
-  late int _selectedIndex;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    _selectedIndex = 0;
-    _widgetOptions = <Widget>[
-      const HomePage(),
-      ProfilePage(
-        currentUser: CurrentUser.user!,
-      ),
-    ];
-    super.initState();
-  }
+@RoutePage(name: 'UserPageRoute')
+class UserPage extends HookWidget {
+  const UserPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: _widgetOptions[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: onItemTapped,
-          backgroundColor: AppColors.bgColor,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-        ));
-  }
-
-  void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    final currentPage = useState(0);
+    return AutoTabsRouter(
+      routes: [
+        const HomePageRoute(),
+        const UnivhexPageRoute(),
+        const DiscoverPageRoute(),
+        ProfilePageRoute(user: CurrentUser.user),
+      ],
+      builder: (context, child) {
+        final tabsRouter = context.tabsRouter;
+        return Scaffold(
+          bottomNavigationBar: NavigationBar(
+            indicatorColor: AppColors.bgColor,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            backgroundColor: AppColors.bgColor,
+            selectedIndex: currentPage.value,
+            onDestinationSelected: (value) {
+              tabsRouter.setActiveIndex(value);
+              currentPage.value = value;
+            },
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(FluentIcons.home_32_regular),
+                selectedIcon: Icon(FluentIcons.home_32_filled),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.hexagon_outlined),
+                selectedIcon: Icon(Icons.hexagon_rounded),
+                label: 'Univhex',
+              ),
+              NavigationDestination(
+                icon: Icon(FluentIcons.compass_northwest_28_regular),
+                selectedIcon: Icon(FluentIcons.compass_northwest_28_filled),
+                label: 'Discover',
+              ),
+              NavigationDestination(
+                icon: Icon(FluentIcons.person_48_regular),
+                selectedIcon: Icon(FluentIcons.person_48_filled),
+                label: 'Profile',
+              ),
+            ],
+          ),
+          body: child,
+        );
+      },
+    );
   }
 }

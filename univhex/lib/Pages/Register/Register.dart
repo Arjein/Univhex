@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 
 import 'registerForm.dart';
 
+@RoutePage(name: 'RegisterPageRoute')
 class Register extends StatelessWidget {
   const Register({super.key});
 
@@ -14,10 +16,10 @@ class Register extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          stops: [0.01, 0.3],
+          stops: [0.01, 0.24],
           colors: [
             AppColors.myPurple,
-            AppColors.myBlack,
+            AppColors.bgColor,
           ],
         ),
       ),
