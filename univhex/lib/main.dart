@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Firebase/user_auth.dart';
 
 import 'package:univhex/Objects/app_user.dart';
@@ -32,9 +33,9 @@ void main() async {
   debugPrint("Is Logged: $isLogged");
 
   if (isLogged) {
-    user = await UserSecureStorage.getUser();
-    debugPrint("Fethced user:" + user.toString());
+    user = await readUserfromDB(await UserSecureStorage.getFirebaseUID());
     CurrentUser.user = user;
+    debugPrint("Fetched user:" + user.toString());
     runApp(
       InitApp(isLogged: isLogged, user: CurrentUser.user!),
     );

@@ -42,9 +42,9 @@ class _UnivhexWidgetState extends State<UnivhexWidget> {
 
   void _loadAvatarImage(AppUser? author) {
     if (author!.imgUrl == "assets/images/icon.png") {
-      _avatarImageProvider = Image.asset("assets/images/icon.png");
+      _avatarImageProvider = Image.asset("assets/images/icon.png",fit: BoxFit.cover,);
     } else {
-      _avatarImageProvider = Image.network(author.imgUrl!);
+      _avatarImageProvider = Image.network(author.imgUrl!,fit: BoxFit.cover,);
     }
   }
 

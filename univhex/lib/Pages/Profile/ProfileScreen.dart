@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexagon/hexagon.dart';
 import 'package:univhex/Constants/AppColors.dart';
@@ -15,14 +16,19 @@ import 'package:image_picker/image_picker.dart';
 
 @RoutePage(name: 'ProfilePageRoute')
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key, required this.user});
-  final AppUser? user;
+  ProfilePage({super.key, required this.user});
+  AppUser? user;
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _isUploading = false;
+
+  Future<void> _reloadProfile() async {
+    widget.user = await readUserfromDB(widget.user!.id!);
+    setState(() {});
+  }
 
   Future<void> selectProfilePicture() async {
     final picker = ImagePicker();
@@ -68,75 +74,94 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          CurrentUser.addVerticalSpace(3),
-          SizedBox(
-            height: CurrentUser.deviceHeight! * 0.22,
-            width: CurrentUser.deviceWidth,
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    selectProfilePicture();
-                  },
-                  child: HexagonWidget.flat(
-                    width: CurrentUser.deviceWidth! * 0.4,
-                    color: AppColors.myPurple,
-                    child: !_isUploading
-                        ? AspectRatio(
-                            aspectRatio: HexagonType.FLAT.ratio,
+      body: RefreshIndicator(
+        onRefresh: () {
+          return _reloadProfile();
+        },
+        child: Expanded(
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    CurrentUser.addVerticalSpace(3),
+                    SizedBox(
+                      height: CurrentUser.deviceHeight! * 0.22,
+                      width: CurrentUser.deviceWidth,
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              selectProfilePicture();
+                            },
                             child: HexagonWidget.flat(
-                              width: MediaQuery.of(context).size.width * 0.35,
-                              child: AspectRatio(
-                                aspectRatio: HexagonType.FLAT.ratio,
-                                child: widget.user!.imgUrl ==
-                                        'assets/images/icon.png'
-                                    ? Image.asset(
-                                        'assets/images/icon.png',
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.network(
-                                        CurrentUser.user!.imgUrl!,
-                                        fit: BoxFit.cover,
+                              width: CurrentUser.deviceWidth! * 0.4,
+                              color: AppColors.myPurple,
+                              child: !_isUploading
+                                  ? AspectRatio(
+                                      aspectRatio: HexagonType.FLAT.ratio,
+                                      child: HexagonWidget.flat(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.35,
+                                        child: AspectRatio(
+                                          aspectRatio: HexagonType.FLAT.ratio,
+                                          child: widget.user!.imgUrl ==
+                                                  'assets/images/icon.png'
+                                              ? Image.asset(
+                                                  'assets/images/icon.png',
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.network(
+                                                  CurrentUser.user!.imgUrl!,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
                                       ),
-                              ),
+                                    )
+                                  : CircularProgressIndicator(
+                                      backgroundColor: AppColors.myPurple,
+                                      color: AppColors.myBlue),
                             ),
-                          )
-                        : CircularProgressIndicator(
-                            backgroundColor: AppColors.myPurple,
-                            color: AppColors.myBlue),
-                  ),
+                          ),
+                          CurrentUser.addVerticalSpace(1),
+                          Text(
+                            "${widget.user!.name} ${widget.user!.surname}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(color: AppColors.obsidianInvert),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.user!.hexPoints.toString(),
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        CurrentUser.addHorizontalSpace(2),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.13,
+                          child: Image.asset("assets/images/icon.png"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                CurrentUser.addVerticalSpace(1),
-                Text(
-                  "${widget.user!.name} ${widget.user!.surname}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall!
-                      .copyWith(color: AppColors.obsidianInvert),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                widget.user!.hexPoints.toString(),
-                style: Theme.of(context).textTheme.displaySmall,
               ),
-              CurrentUser.addHorizontalSpace(2),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.13,
-                child: Image.asset("assets/images/icon.png"),
+              SliverToBoxAdapter(
+                child: CurrentUser.addVerticalSpace(1.2),
+              ),
+              SliverToBoxAdapter(
+                child: ProfileTabBar(userId: widget.user!.id!),
               ),
             ],
           ),
-          CurrentUser.addVerticalSpace(1.2),
-          ProfileTabBar(userId: widget.user!.id!)
-        ],
+        ),
       ),
     );
   }
@@ -248,49 +273,42 @@ class UserPostList extends StatefulWidget {
 class _UserPostListState extends State<UserPostList> {
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () {
-        // Bunlar düzgün değil
-        setState(() {});
-        return Future.delayed(Duration(seconds: 1));
-      },
-      child: FutureBuilder(
-        future: fetchUserPosts(widget.userId),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text("Error Occurred ${snapshot.error}"));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else {
-            List<UnivhexPost> dataList = snapshot.data ?? [];
+    return FutureBuilder(
+      future: fetchUserPosts(widget.userId),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text("Error Occurred ${snapshot.error}"));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          List<UnivhexPost> dataList = snapshot.data ?? [];
 
-            // UnivhexPost currentPost = dataList[index];
-            return dataList.isNotEmpty
-                ? ListView.builder(
-                    itemCount: dataList.length,
-                    itemBuilder: (context, index) {
-                      UnivhexPost currentPost = dataList[index];
-                      return Column(
-                        children: [
-                          UnivhexPostWidget(
-                            post: currentPost,
-                            height: 0,
-                          ),
-                          PostInteractionBar(post: currentPost),
-                          const Divider(
-                            height: 0,
-                            color: AppColors.obsidianInvert,
-                            thickness: 0.5,
-                          ),
-                        ],
-                      );
-                    },
-                  )
-                : Container();
-          }
-        },
-      ),
+          // UnivhexPost currentPost = dataList[index];
+          return dataList.isNotEmpty
+              ? ListView.builder(
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index) {
+                    UnivhexPost currentPost = dataList[index];
+                    return Column(
+                      children: [
+                        UnivhexPostWidget(
+                          post: currentPost,
+                          height: 0,
+                        ),
+                        PostInteractionBar(post: currentPost),
+                        const Divider(
+                          height: 0,
+                          color: AppColors.obsidianInvert,
+                          thickness: 0.5,
+                        ),
+                      ],
+                    );
+                  },
+                )
+              : Container();
+        }
+      },
     );
   }
 }

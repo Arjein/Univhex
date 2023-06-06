@@ -55,18 +55,29 @@ class UnivhexPost {
   }
 
 // Add like to post
-  void addLike() {
+  void addLike() async {
     final postsCollection = FirebaseFirestore.instance.collection('Posts');
     final postRef = postsCollection.doc(id);
-
+    final usersCollection = FirebaseFirestore.instance.collection('Users');
+    int x = 0;
+    final authorRef = usersCollection.doc(authorId);
     // Like alınca veritabanına kaydedebiliriz.
     if (hexedBy.contains(CurrentUser.user!.id)) {
       hexedBy.remove(CurrentUser.user!.id);
+      x = -1;
     } else {
       hexedBy.add(CurrentUser.user!.id);
+      x = 1;
     }
+
     hexCount = hexedBy.length;
     postRef.update({'HexedBy': hexedBy, 'HexCount': hexCount});
+
+    Map<String, dynamic> data = {
+      'HexPoints': FieldValue.increment(x), // Increment by 1
+    };
+
+    authorRef.update(data);
   }
 
 // ADDs comment to a post

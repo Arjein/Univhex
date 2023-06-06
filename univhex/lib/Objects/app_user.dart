@@ -47,7 +47,7 @@ class AppUser {
       "FieldOfStudy": model.fieldOfStudy,
       "YearOfStudy": model.yearOfStudy,
       "ImgUrl": model.imgUrl,
-      "HexPoints": model.hexPoints,
+      "HexPoints": model.hexPoints as int,
     };
   }
 

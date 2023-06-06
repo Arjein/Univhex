@@ -13,6 +13,10 @@ class UserSecureStorage {
     return _storage.read(key: "email");
   }
 
+  static Future<String?> getFirebaseUID() async {
+    return _storage.read(key: "uid");
+  }
+
   static Future<bool> setEmail(String email) async {
     try {
       await _storage.write(key: _keyEmail, value: email);

@@ -19,6 +19,82 @@ class PostInteractionBar extends StatefulWidget {
 }
 
 class _PostInteractionBarState extends State<PostInteractionBar> {
+  void showReportBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: onPressedReportButton,
+                child: const Text('Report'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void onPressedReportButton() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Report Confirmation'),
+        content: const Text('Are you sure you want to report this post?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.router.pop();
+            },
+            child: const Text('Report'),
+          ),
+          TextButton(
+            onPressed: () => context.router.pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      // 3. Gather additional information (optional)
+
+      // ...
+
+      // 4. Send the report
+      try {
+        // Check response status and provide appropriate feedback to the user
+
+        // 5. Provide feedback to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Report submitted successfully'),
+          ),
+        );
+      } catch (e) {
+        // Handle network or server errors
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: const Text(
+                'Failed to submit the report. Please check your internet connection and try again.'),
+            actions: [
+              TextButton(
+                onPressed: () => context.router.pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint(widget.post.toString());
@@ -80,11 +156,31 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                   ),
                 ],
               ),
+              // Report Button
               IconButton(
                 alignment: Alignment.centerRight,
                 icon: const Icon(Icons.more_horiz,
                     color: AppColors.obsidianInvert),
-                onPressed: () {},
+                onPressed: () {
+                  //TODO Implement Report logic
+
+                  showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Container(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: onPressedReportButton,
+                                child: const Text('Report'),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+                },
               ),
             ],
           ),

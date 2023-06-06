@@ -43,13 +43,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                 SizedBox(
                   width: 30,
                   child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: IconButton(
-                      icon: Image.asset(
-                        'assets/images/anonymous.png',
-                        fit: BoxFit.fitWidth,
+                    child: GestureDetector(
+                      child: Image.asset(
+                        'assets/images/icon.png',
+                        fit: BoxFit.cover,
                       ),
-                      onPressed: () {
+                      onTap: () {
                         CurrentUser.inPost = false;
                         if (author!.email != CurrentUser.user!.email) {
                           context.router.push(ProfilePageRoute(user: author));

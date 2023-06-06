@@ -78,7 +78,6 @@ Future<List<UnivhexPost>> fetchUserPosts(String userId) async {
 
 Future<AppUser?> readUserfromDB(String? userId) async {
   try {
-    debugPrint("Burdamı patliyor acaba?");
     final ref = FirebaseFirestore.instance
         .collection("Users")
         .doc(userId)
@@ -89,10 +88,10 @@ Future<AppUser?> readUserfromDB(String? userId) async {
 
     final docSnap = await ref.get();
     debugPrint("BUM");
-    debugPrint(docSnap.data().toString());
+
     if (docSnap.exists) {
       final AppUser user = docSnap.data()!;
-      debugPrint("Retrieved User: $user");
+      debugPrint(user.hexPoints.toString());
       return user;
     }
     return null;

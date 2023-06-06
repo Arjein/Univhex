@@ -21,9 +21,9 @@ class _HomePageState extends State<HomePage> {
   late Future<List<UnivhexPost>> _feedFuture;
 
   Future<void> _refreshFeed() async {
+    _feedFuture = fetchFeed(CurrentUser.user!.university!);
     setState(() {
       debugPrint("Refresh Feed");
-      _feedFuture = fetchFeed(CurrentUser.user!.university!);
     });
   }
 
