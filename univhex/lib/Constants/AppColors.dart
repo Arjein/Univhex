@@ -23,8 +23,8 @@ class AppColors {
   static const Color myAqua = Color(0xFF7AF8FF);
   static const Color myPink = Color(0xFFD875FF);
   static const Color myPurple = Color(0xFF8D4BE0);
-  static const Color myGold = Color(0xFFAF9500);
-  static const Color mySilver = Color(0XFFB4B4B4);
+  static const Color myGold = Color(0xFFFFDD43);
+  static const Color mySilver = Color(0XFFC0C0C0);
   static const Color myBronze = Color(0xFFAD8A56);
 
   static MaterialColor myBlackMaterial = generateMaterialColor(myBlack);

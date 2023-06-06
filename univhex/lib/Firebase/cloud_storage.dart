@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
-
 
 // Upload the profile picture to Firebase Cloud Storage
 Future<String> uploadProfilePicture(String userId, String imagePath) async {
+  debugPrint("Buraya girmemeli");
   final Reference storageRef =
       FirebaseStorage.instance.ref().child('profile_pictures/$userId');
   final TaskSnapshot uploadTask = await storageRef.putFile(File(imagePath));
@@ -21,7 +23,3 @@ void saveProfilePictureUrl(String userId, String profilePictureUrl) {
   CurrentUser.user!.imgUrl = profilePictureUrl;
   usersRef.doc(userId).update({'ImgUrl': profilePictureUrl});
 }
-
-
-
-

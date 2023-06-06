@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
+import 'package:univhex/Firebase/firestore.dart';
+import 'package:univhex/Pages/Home/post_detail.dart';
 import 'package:univhex/Objects/univhex_post.dart';
-import 'package:univhex/Router/app_router.gr.dart';
+import 'package:univhex/Router/app_router.dart';
 
 class PostInteractionBar extends StatefulWidget {
   const PostInteractionBar({
@@ -161,8 +164,10 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    timePassed != null ? "$timePassed ${timeType!}" : timeType!,
-                    style: const TextStyle(fontSize: 12),
+                    timePassed != null
+                        ? timePassed.toString() + " " + timeType!
+                        : timeType!,
+                    style: TextStyle(fontSize: 12),
                   ),
                 ),
               ),
@@ -177,8 +182,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
-                          decoration:
-                              const BoxDecoration(color: AppColors.bgColor),
+                          decoration: BoxDecoration(color: AppColors.bgColor),
                           height: CurrentUser.deviceHeight! * 0.3,
                           padding: const EdgeInsets.all(16.0),
                           child: Row(

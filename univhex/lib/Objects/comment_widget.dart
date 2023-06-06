@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_comment.dart';
 import 'package:univhex/Objects/app_user.dart';
-import 'package:univhex/Router/app_router.gr.dart';
+import 'package:univhex/Router/app_router.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget({Key? key, required this.comment}) : super(key: key);
@@ -50,7 +50,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ),
                       onTap: () {
                         CurrentUser.inPost = false;
-                        if (author!.email != CurrentUser.user!.email) {
+                        if (author!.id != CurrentUser.user!.id) {
                           context.router.push(ProfilePageRoute(user: author));
                         } else {
                           debugPrint("Same Person");
@@ -70,7 +70,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                       Text(widget.comment.textContent),
-                      const Divider(
+                      Divider(
                         height: 0.5,
                         thickness: 0.5,
                       )

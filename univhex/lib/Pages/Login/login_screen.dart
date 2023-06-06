@@ -1,7 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import "package:flutter/material.dart";
+import 'package:univhex/Constants/Constants.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Router/app_router.gr.dart';
+import 'package:univhex/Pages/Home/home_screen.dart';
+import 'package:univhex/Pages/Register/Register.dart';
+import 'package:univhex/Pages/page_navigator.dart';
+import 'package:univhex/Router/app_router.dart';
+import 'package:univhex/Router/empty_router_pages/app_router_empty.dart';
 import 'loginForm.dart';
 
 @RoutePage(name: "LoginPageRoute")

@@ -6,7 +6,7 @@ import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/user_auth.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
-import 'package:univhex/Router/app_router.gr.dart';
+import 'package:univhex/Router/app_router.dart';
 import 'package:univhex/Widgets/appTextValidators.dart';
 
 @RoutePage(name: "RegisterContinueRoute")
@@ -171,11 +171,11 @@ class _registerContinueFormState extends State<registerContinueForm> {
                       AppUser newUser = AppUser(
                         id: "",
                         email: widget.email,
-                        name: widget.name,
-                        surname: widget.surname,
+                        name: widget.name.toLowerCase(),
+                        surname: widget.surname.toLowerCase(),
                         password: widget.password,
-                        university: university,
-                        fieldOfStudy: major,
+                        university: university!.toLowerCase(),
+                        fieldOfStudy: major!.toLowerCase(),
                         yearOfStudy: yearOfStudy,
                         imgUrl: 'assets/images/icon.png',
                         hexPoints: 0,
@@ -191,9 +191,10 @@ class _registerContinueFormState extends State<registerContinueForm> {
                         context.router.push(LoginPageRoute());
                       }
                     }
+                    ;
                   },
                   child: const Text("Sign Up!"))
-              : const CircularProgressIndicator(
+              : CircularProgressIndicator(
                   color: AppColors.myLightBlue,
                   backgroundColor: AppColors.myPurple,
                 ),

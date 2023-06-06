@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/current_user.dart';
-import 'package:univhex/Router/app_router.gr.dart';
+import 'package:univhex/Router/app_router.dart';
 
 import 'package:univhex/Widgets/appTextFields.dart';
 import 'package:univhex/Widgets/appTextValidators.dart';
 
+import 'RegisterContinue.dart';
 
 class AppRegisterForm extends StatefulWidget {
   const AppRegisterForm({
@@ -136,7 +137,7 @@ class AppRegisterFormState extends State<AppRegisterForm> {
                         password: _password!));
                   }
                 },
-                child: const Text("Continue"),
+                child: Text("Continue"),
               )
             ],
           ),

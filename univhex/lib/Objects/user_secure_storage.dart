@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:univhex/Objects/app_user.dart';
+import 'package:crypto/crypto.dart';
 
 class UserSecureStorage {
   static const _storage = FlutterSecureStorage();
@@ -8,6 +11,12 @@ class UserSecureStorage {
   static const _keyUser = "user";
   static const _keyEmail = "email";
   static const _keyPassword = "password";
+
+  static _hashpw(String str) {
+    var bytes = utf8.encode(str);
+    var hash = sha256.convert(bytes).toString();
+    return hash;
+  }
 
   static Future<String?> getEmail() async {
     return _storage.read(key: "email");
@@ -39,24 +48,9 @@ class UserSecureStorage {
     }
   }
 
-  static Future<AppUser?> getUser() async {
-    return AppUser.deserialize(await _storage.read(key: _keyUser));
-  }
-
-  static Future<bool> setUser(AppUser user) async {
+  static Future<bool?> setFirebaseUID(String uid) async {
     try {
-      await _storage.write(key: _keyUser, value: AppUser.serialize(user));
-      await _storage.write(key: _keyEmail, value: user.email);
-      await _storage.write(key: _keyPassword, value: user.password);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  static Future<bool?> setFirebaseUID(String UID) async {
-    try {
-      await _storage.write(key: _keyFirebaseUID, value: UID);
+      await _storage.write(key: _keyFirebaseUID, value: uid);
       return true;
     } catch (e) {
       return false;

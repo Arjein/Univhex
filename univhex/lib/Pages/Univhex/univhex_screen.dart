@@ -5,6 +5,7 @@ import 'package:univhex/Constants/Constants.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Objects/univhex_post.dart';
+import 'package:univhex/Objects/univhex_post_widget.dart';
 import 'package:univhex/Pages/Univhex/univhex.dart';
 
 import 'univhex_widget.dart';
@@ -33,9 +34,7 @@ class UnivhexPage extends StatelessWidget {
           children: [
             SizedBox(
                 width: CurrentUser.deviceWidth! * 0.1,
-                child: Image.asset(
-                  "assets/images/icon.png",
-                )),
+                child: Image.asset("assets/images/icon.png")),
             const Text("UNIVHEX"),
           ],
         ),

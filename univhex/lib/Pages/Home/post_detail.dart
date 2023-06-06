@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:univhex/Constants/AppColors.dart';
 import 'package:univhex/Constants/current_user.dart';
 import 'package:univhex/Objects/app_comment.dart';
+import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/post_interaction_bar.dart';
 import 'package:univhex/Objects/univhex_post.dart';
 import 'package:univhex/Objects/univhex_post_widget.dart';
@@ -19,12 +21,12 @@ class PostDetail extends StatefulWidget {
 }
 
 class _PostDetailState extends State<PostDetail> {
-  final TextEditingController _controller = TextEditingController();
+  TextEditingController _controller = TextEditingController();
 
   late ImageProvider<Object> _avatarImageProvider;
   void _loadAvatarImage() {
     if (CurrentUser.user!.imgUrl == "assets/images/icon.png") {
-      _avatarImageProvider = const AssetImage("assets/images/icon.png");
+      _avatarImageProvider = AssetImage("assets/images/icon.png");
     } else {
       _avatarImageProvider = NetworkImage(CurrentUser.user!.imgUrl!);
     }

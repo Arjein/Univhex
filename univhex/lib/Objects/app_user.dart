@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 
 class AppUser {
   // User Object.
@@ -12,12 +13,29 @@ class AppUser {
   final String? university;
   final String? fieldOfStudy;
   final String? yearOfStudy;
-  String? imgUrl;
+  String? imgUrl = "";
   final int? hexPoints;
-  // we might hash password
+
   String hashPassword(String password) {
-    var bytes = utf8.encode(password);
-    return sha256.convert(bytes).toString();
+    final bytes = utf8.encode(password); // Convert the password to bytes
+    final digest = sha256.convert(bytes); // Hash the bytes using SHA-256
+
+    // Return the hashed password as a hexadecimal string
+    return digest.toString();
+  }
+
+  ImageProvider<Object> getImageProvider() {
+    return imgUrl == 'assets/images/icon.png'
+        ? const AssetImage('assets/images/icon.png')
+        : NetworkImage(imgUrl!) as ImageProvider;
+    ;
+  }
+
+  bool verifyPassword(String enteredPassword, String hashedPassword) {
+    final enteredPasswordHash = hashPassword(enteredPassword);
+
+    // Compare the stored hashed password with the entered password hash
+    return enteredPasswordHash == hashedPassword;
   }
 
   AppUser({
@@ -32,46 +50,6 @@ class AppUser {
     this.imgUrl,
     this.hexPoints,
   });
-
-  static String serialize(AppUser model) => json.encode(AppUser.toMap(model));
-
-  static Map<String, dynamic> toMap(AppUser model) {
-    return <String, dynamic>{
-      "id": model.id,
-      "Name": model.name,
-      "Surname": model.surname,
-      "Email": model.email,
-      "Password": model.password,
-      "University": model.university,
-      "FieldOfStudy": model.fieldOfStudy,
-      "YearOfStudy": model.yearOfStudy,
-      "ImgUrl": model.imgUrl,
-      "HexPoints": model.hexPoints as int,
-    };
-  }
-
-  factory AppUser.fromJson(Map<String, dynamic> jsonData) {
-    return AppUser(
-      id: jsonData["id"],
-      name: jsonData["Name"],
-      surname: jsonData["Surname"],
-      email: jsonData["Email"],
-      password: jsonData["Password"],
-      university: jsonData["University"],
-      fieldOfStudy: jsonData["FieldOfStudy"],
-      yearOfStudy: jsonData["YearOfStudy"],
-      imgUrl: jsonData["ImgUrl"],
-      hexPoints: jsonData["HexPoints"],
-    );
-  }
-
-  static AppUser? deserialize(String? json) {
-    if (json != null) {
-      return AppUser.fromJson(jsonDecode(json));
-    } else {
-      return null;
-    }
-  }
 
   factory AppUser.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -93,12 +71,14 @@ class AppUser {
   }
 
   Map<String, dynamic> toFirestore() {
+    final hashedPassword = hashPassword(password!);
+
     return {
       "id": id,
       "Name": name,
       "Surname": surname,
       "Email": email,
-      "Password": password,
+      "Password": hashedPassword,
       "University": university,
       "FieldOfStudy": fieldOfStudy,
       "YearOfStudy": yearOfStudy,

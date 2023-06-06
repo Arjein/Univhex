@@ -6,9 +6,9 @@ import 'package:univhex/Firebase/firestore.dart';
 import 'package:univhex/Firebase/user_auth.dart';
 import 'package:univhex/Objects/app_user.dart';
 import 'package:univhex/Objects/user_secure_storage.dart';
+import 'package:univhex/Router/app_router.dart';
+import 'package:univhex/Router/empty_router_pages/app_router_empty.dart';
 import 'package:univhex/Widgets/appTextFields.dart';
-
-import '../../Router/app_router.gr.dart';
 
 class AppLoginForm extends StatefulWidget {
   AppLoginForm({
@@ -35,7 +35,7 @@ class AppLoginFormState extends State<AppLoginForm> {
     if (widget._email == null) {
       _email = await UserSecureStorage.getEmail() ?? '';
       // _password = await UserSecureStorage.getPassword() ?? '';
-      debugPrint("Init:${_email!}");
+      debugPrint("Init:" + _email!);
     }
     setState(() {
       _emailController.text = _email!;
@@ -65,16 +65,17 @@ class AppLoginFormState extends State<AppLoginForm> {
         loggingIn = true;
         debugPrint(loggingIn.toString());
       });
-      if (await authUser(_email, _password)) {
+      if (await authUser(_email, _password!)) {
         debugPrint("User Authenticated");
         AppUser? user = await readUserfromDB(CurrentUser.firebaseUser!.uid);
-        if (user != null && await UserSecureStorage.setUser(user)) {
-          debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:$user");
+        if (user != null) {
+          debugPrint("Başarıyla kaydettik usersecurestoragea Userı User:" +
+              user.toString());
           CurrentUser.user = user;
 
           debugPrint(
               "Login Succesfull!\nSubmitted Login Form\nE-mail: $_email, Password: $_password");
-          context.router.push(const AppRoute());
+          context.router.push(AppRoute());
         }
       }
     }
@@ -132,9 +133,9 @@ class AppLoginFormState extends State<AppLoginForm> {
                   onPressed: () {
                     _submitLoginForm();
                   },
-                  child: const Text("Sign In"),
+                  child: Text("Sign In"),
                 )
-              : const CircularProgressIndicator(
+              : CircularProgressIndicator(
                   backgroundColor: AppColors.myLightBlue,
                 ),
         ],

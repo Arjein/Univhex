@@ -39,7 +39,6 @@ Future<bool> addNewPostDB(UnivhexPost newPost) async {
       hexedBy: newPost.hexedBy,
       hexCount: newPost.hexCount,
       comments: newPost.comments,
-      media: newPost.media,
     );
 
     await newPostRef.set(updatedPost.toFirestore());
@@ -69,7 +68,7 @@ Future<List<UnivhexPost>> fetchUserPosts(String userId) async {
         .get();
     final dataList = snapshot.docs.map((doc) => doc.data()).toList();
     final userunivhexPosts = dataList.map((data) => data).toList();
-    debugPrint("Kullanıcı post sayiis:${userunivhexPosts.length}");
+    debugPrint("Kullanıcı post sayiis:" + userunivhexPosts.length.toString());
     return userunivhexPosts;
   } catch (e) {
     debugPrint(e.toString());
@@ -102,37 +101,11 @@ Future<AppUser?> readUserfromDB(String? userId) async {
   }
 }
 
-Future<UnivhexPost?> readPostfromDB(UnivhexPost post) async {
-  try {
-    final ref = FirebaseFirestore.instance
-        .collection("Posts")
-        .where('id', isEqualTo: post.id)
-        .withConverter(
-          fromFirestore: UnivhexPost.fromFirestore,
-          toFirestore: (UnivhexPost post, _) => post.toFirestore(),
-        );
-
-    final docSnap = await ref.get();
-    final queryLen = docSnap.docs.length;
-    debugPrint(queryLen.toString());
-    if (queryLen == 1) {
-      final UnivhexPost post = docSnap.docs.elementAt(0).data();
-      debugPrint("Retrieved Post: $post");
-      return post;
-    } else {
-      return null;
-    }
-  } catch (e) {
-    debugPrint(e.toString());
-    return null;
-  }
-}
-
 Future<List<UnivhexPost>> fetchFeed(String universityName) async {
   try {
     final snapshot = await FirebaseFirestore.instance
         .collection('Posts')
-        .where('University', isEqualTo: universityName) // error generated here
+        .where('University', isEqualTo: universityName.toLowerCase())
         .withConverter(
           fromFirestore: UnivhexPost.fromFirestore,
           toFirestore: (UnivhexPost post, _) => post.toFirestore(),
@@ -170,16 +143,4 @@ Future<List<UnivhexPost>> fetchUnivhexes(String universityName) async {
     debugPrint(e.toString());
     return [];
   }
-}
-
-Stream<List<UnivhexPost>> fetchFeedStream() {
-  return FirebaseFirestore.instance
-      .collection('Posts')
-      .withConverter(
-        fromFirestore: UnivhexPost.fromFirestore,
-        toFirestore: (UnivhexPost post, _) => post.toFirestore(),
-      )
-      .orderBy('Datetime', descending: true)
-      .snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
 }
