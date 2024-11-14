@@ -47,13 +47,13 @@ Univhex is a social media platform designed exclusively for university students,
 
 <div align="center">
 
-| Login Screen | Comment Section |
+| Login Screen | Post Flood Screen |
 |:-------------------------:|:-------------------------:|
-| <img src="simulator_screenshots/login_page.png" alt="Login Screen" width="250"> | <img src="simulator_screenshots/comment_section.png" alt="Comment Section" width="250"> |
+| <img src="simulator_screenshots/login_page.png" alt="Login Screen" width="250"> | <img src="simulator_screenshots/Flood.png" alt="Post Flood Screen" width="250"> |
 
-| Profile Screen | Post Flood Screen |
+| Profile Screen | Comment Section |
 |:-------------------------:|:-------------------------:|
-| <img src="simulator_screenshots/Profile_1.png" alt="Profile Screen" width="250"> | <img src="simulator_screenshots/Flood.png" alt="Post Flood Screen" width="250"> |
+| <img src="simulator_screenshots/Profile_1.png" alt="Profile Screen" width="250"> | <img src="simulator_screenshots/comment_section.png" alt="Comment Section" width="250"> |
 
 </div>
 
